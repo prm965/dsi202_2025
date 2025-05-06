@@ -1,0 +1,56 @@
+/* ใช้ Prompt ทั้งระบบ */
+body, html,
+input, select, textarea,
+.navbar, .sidebar, .content-wrapper, .form-control {
+    font-family: 'Prompt', sans-serif !important;
+}
+
+/* Header bar (Navbar) */
+.navbar {
+    background-color: #3e8340 !important;
+    color: white !important;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #1D1D1B !important;
+    color: #1D1D1B !important;
+}
+
+/* Sidebar menu items: กลุ่ม 1 = สีชมพู */
+.sidebar .model-allergen a,
+.sidebar .model-restaurant a,
+.sidebar .model-menuitem a {
+    background-color: #f4c2ce !important;
+    color: #1D1D1B !important;
+    border-radius: 6px;
+    margin-bottom: 3px;
+}
+
+/* กลุ่ม 2 = สีเขียว */
+.sidebar .model-cartitem a,
+.sidebar .model-orderitem a,
+.sidebar .model-order a {
+    background-color: #bfd992 !important;
+    color: #1D1D1B!important;
+    border-radius: 6px;
+    margin-bottom: 3px;
+}
+
+/* ปุ่ม */
+.btn, .btn-primary, .btn-info, .btn-default {
+    background-color: #efaca5 !important;
+    border-color: #efaca5 !important;
+    color: white !important;
+}
+
+.btn:hover {
+    background-color: #e6978f !important;
+}
+
+/* Title */
+.content-header h1 {
+    font-weight: 600;
+    color: #3e8340 !important;
+}
+

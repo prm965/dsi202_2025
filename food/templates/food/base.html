@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>imsuk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Prompt:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- 🔗 UIcons (Solid Rounded) -->
+    <link href="{% static 'uicons/css/uicons-solid-rounded.css' %}" rel="stylesheet">
+
+    <!-- ✅ Custom styles -->
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet">
+
+    <style>
+      * {
+        font-family: 'Prompt', 'Montserrat', sans-serif;
+      }
+      .font-th { font-family: 'Prompt', sans-serif; }
+      .font-en { font-family: 'Montserrat', sans-serif; }
+
+      /* ✅ ปิด spin buttons */
+      input[type=number]::-webkit-inner-spin-button,
+      input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type=number] {
+        -moz-appearance: textfield;
+      }
+    </style>
+</head>
+<body class="bg-[#ffffff] text-gray-800 m-0 p-0 overflow-hidden">
+
+  <!-- ✅ Layout: Fullscreen Grid -->
+  <div class="w-screen h-screen flex overflow-hidden">
+
+    <!-- 🔹 Sidebar Left -->
+    <aside class="bg-[#efaca5] text-white w-[250px] flex flex-col justify-between px-4 py-6 shrink-0">
+      <div class="space-y-5">
+        <div class="text-xl font-bold mb-6">imsuk</div>
+        <nav class="space-y-4 text-sm">
+          <a href="#" class="flex items-center gap-3 hover:text-gray-200">
+            <i class="fi fi-sr-home"></i> หน้าแรก
+          </a>
+          <a href="#" class="flex items-center gap-3 hover:text-gray-200">
+            <i class="fi fi-sr-gift"></i> โปรโมชั่น
+          </a>
+          <a href="#" class="flex items-center gap-3 hover:text-gray-200">
+            <i class="fi fi-sr-credit-card"></i> การชำระเงิน
+          </a>
+          <a href="#" class="flex items-center gap-3 hover:text-gray-200">
+            <i class="fi fi-sr-envelope"></i> ข้อความ
+          </a>
+          <a href="#" class="flex items-center gap-3 hover:text-gray-200">
+            <i class="fi fi-sr-user"></i> โปรไฟล์ผู้ใช้
+          </a>
+        </nav>
+      </div>
+      <div>
+        <a href="#" class="flex items-center gap-3 text-sm hover:text-gray-200">
+          <i class="fi fi-sr-exit"></i> ออกจากระบบ
+        </a>
+      </div>
+    </aside>
+
+    <!-- 🔸 Main Content (Scrollable Center) -->
+    <main class="flex-1 overflow-y-auto h-full bg-[#fffefc] px-6 py-6">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- 🔹 Sidebar Right -->
+    <aside class="bg-[#f7efda] w-[320px] p-6 shrink-0 h-full overflow-y-auto border-l border-gray-200">
+      <!-- ส่วนที่ 3: โปรไฟล์ผู้ใช้ + ตะกร้า -->
+      {% block sidebar %}{% endblock %}
+    </aside>
+
+  </div>
+
+</body>
+</html>

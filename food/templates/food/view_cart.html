@@ -1,0 +1,30 @@
+{% extends 'food/base.html' %}
+{% block content %}
+
+<h2 class="text-2xl font-bold mb-4 font-th">ตะกร้าของฉัน</h2>
+
+<table class="w-full border rounded-lg overflow-hidden">
+  <tr class="bg-[#bfd992] text-white text-left text-sm">
+    <th class="p-3">เมนู</th>
+    <th class="p-3">จำนวน</th>
+    <th class="p-3">ราคารวม</th>
+    <th class="p-3">จัดการ</th>
+  </tr>
+  {% for item in cart_items %}
+  <tr class="border-b">
+    <td class="p-3">{{ item.menu_item.name }}</td>
+    <td class="p-3">{{ item.quantity }}</td>
+    <td class="p-3">{{ item.get_total_price|floatformat:2 }} ฿</td>
+    <td class="p-3 space-x-1">
+      <a href="{% url 'decrease_quantity' item.id %}" class="bg-yellow-400 text-white px-2 py-1 rounded text-xs hover:bg-yellow-500">-1</a>
+      <a href="{% url 'remove_from_cart' item.id %}" class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">ลบ</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<p class="text-right mt-4 font-bold text-lg font-th">รวมทั้งหมด: {{ total|floatformat:2 }} ฿</p>
+
+<a href="#" class="block w-full mt-4 bg-[#3e8340] hover:bg-green-700 text-white text-center py-2 rounded font-th">ดำเนินการสั่งซื้อ</a>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'food/base.html' %}
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow space-y-4">
+
+  <h1 class="text-2xl font-bold text-[#3e8340]">{{ menu_item.name }}</h1>
+
+  <img src="{{ menu_item.image.url }}" class="w-full rounded-xl h-64 object-cover" alt="{{ menu_item.name }}">
+
+  <p><strong>ราคาเต็ม:</strong> ฿{{ menu_item.price }}</p>
+  <p><strong>ลด:</strong> {{ menu_item.discount_percent }}%</p>
+  <p><strong>ราคาหลังหัก:</strong> <span class="text-[#3e8340] font-semibold">฿{{ menu_item.final_price }}</span></p>
+
+  <p>
+    <strong>ส่วนผสมที่แพ้:</strong>
+    {% for allergen in menu_item.allergens.all %}
+      <span class="inline-block bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">{{ allergen.name }}</span>
+    {% empty %}
+      ไม่มี
+    {% endfor %}
+  </p>
+
+  <p><strong>รายละเอียด:</strong> {{ menu_item.description }}</p>
+
+  <!-- ปุ่มเพิ่มลงตะกร้า -->
+  <form method="POST" action="{% url 'add_to_cart' menu_item.id %}" class="mt-4 flex items-center gap-2">
+    {% csrf_token %}
+    <input type="number" name="quantity" min="1" value="1" class="w-20 border px-2 py-1 rounded">
+    <button type="submit" class="bg-[#3e8340] text-white px-5 py-2 rounded-full hover:bg-[#2f6e30] transition">
+      เพิ่มลงตะกร้า
+    </button>
+  </form>
+
+</div>
+{% endblock %}

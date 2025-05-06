@@ -1,0 +1,88 @@
+{% extends 'food/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="flex h-screen overflow-hidden">
+
+    <!-- Main Content (Middle) -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-[#f9f6fb]">
+
+      <!-- Greeting and Address -->
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-[#3e8340]">สวัสดีคุณ {{ user.username }}</h1>
+          <a href="#" class="text-sm text-blue-500 underline">📍 {{ user.profile.address|default:'ยังไม่มีที่อยู่' }}</a>
+        </div>
+        <form method="GET" action="" class="w-1/3">
+          <input type="text" name="q" value="{{ request.GET.q }}" placeholder="ค้นหาอาหาร / ร้านอาหาร"
+                 class="w-full border rounded-full px-4 py-2 focus:outline-none shadow-sm text-sm" />
+        </form>
+      </div>
+  
+      <!-- Category Filters -->
+      <div class="flex gap-4 text-sm">
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-hamburger"></i> อาหารคาว</div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-cupcake"></i> ขนมหวาน</div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-shopping-bag"></i> ของชำ</div>
+      </div>
+
+{% endblock %}
+
+    <!-- Promotion Banner -->
+    <div class="bg-[#ffeef4] text-[#efaca4] p-4 rounded-2xl shadow text-center font-medium">
+      🎁 รับ <strong>ฟรีป๊อปคอร์น + เครื่องดื่ม</strong> เมื่อสั่งครบ 300 บาท
+    </div>
+
+    <!-- Menu Items -->
+    <div>
+      <h2 class="text-xl font-bold mb-3">กล่องสุ่มสำหรับคุณ</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {% for item in menu_items %}
+        <div class="bg-white p-3 rounded-2xl shadow text-sm space-y-2">
+          <div class="aspect-square overflow-hidden rounded-xl">
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-full object-cover" />
+          </div>
+          <h3 class="font-bold text-gray-800">{{ item.name }}</h3>
+          <p class="text-xs text-gray-500">{{ item.restaurant.name }}</p>
+          <div class="text-sm flex justify-between items-center">
+            <div class="space-y-1">
+              <p class="text-xs text-gray-500 flex items-center gap-1"><i class="fi fi-sr-clock-three text-green-500"></i> {{ item.restaurant.open_time }} - {{ item.restaurant.close_time }}</p>
+              <p class="text-xs text-gray-500 flex items-center gap-1"><i class="fi fi-sr-star text-yellow-500"></i> {{ item.restaurant.rating|floatformat:1 }}</p>
+              <p class="text-xs text-gray-500 flex items-center gap-1"><i class="fi fi-sr-land-layer-location text-pink-500"></i> {{ item.restaurant.distance|default:'~5' }} กม</p>
+            </div>
+            <div class="text-right bg-pink-200 px-3 py-1.5 rounded-lg">
+              <div class="line-through text-xs text-gray-500">฿{{ item.price|floatformat:0 }}</div>
+              <div class="text-xl font-bold text-gray-900">฿{{ item.final_price|floatformat:0 }}</div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Banner Upload Placeholder -->
+    <div class="bg-white rounded-xl p-4 shadow text-center text-gray-500 border-dashed border-2 border-gray-300">
+      📸 พื้นที่สำหรับป้ายแบนเนอร์ (แอดมินอัปโหลดได้)
+    </div>
+
+    <!-- Recommended Restaurants -->
+    <div>
+      <h2 class="text-xl font-bold mb-3">ร้านอาหารแนะนำ</h2>
+      <div class="flex gap-4 overflow-x-auto">
+        {% for restaurant in restaurants %}
+        <div class="bg-white p-3 min-w-[180px] rounded-2xl shadow text-center">
+          <img src="{{ restaurant.image.url }}" class="w-full h-24 object-cover rounded-xl mb-1" />
+          <h4 class="font-medium">{{ restaurant.name }}</h4>
+          <p class="text-xs text-gray-600"><i class="fi fi-sr-star text-yellow-500"></i> {{ restaurant.rating|floatformat:1 }}</p>
+          <p class="text-xs text-gray-500">{{ restaurant.menu_items.all.0.name }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Donate Section -->
+    <div class="text-center text-sm text-gray-400">
+      🙏 พื้นที่สำหรับแสดงระบบบริจาค (future section)
+    </div>
+
+  </div>

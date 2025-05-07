@@ -2,10 +2,10 @@
 {% load static %}
 
 {% block content %}
-<div class="flex h-screen overflow-hidden">
+<div class="flex h-screen">
 
     <!-- Main Content (Middle) -->
-    <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-[#f9f6fb]">
+    <div class="flex-1 p-6 space-y-6 bg-[#f9f6fb]">
 
       <!-- Greeting and Address -->
       <div class="flex justify-between items-center">
@@ -25,8 +25,6 @@
         <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-cupcake"></i> ขนมหวาน</div>
         <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-shopping-bag"></i> ของชำ</div>
       </div>
-
-{% endblock %}
 
     <!-- Promotion Banner -->
     <div class="bg-[#ffeef4] text-[#efaca4] p-4 rounded-2xl shadow text-center font-medium">
@@ -86,3 +84,4 @@
     </div>
 
   </div>
+  {% endblock %}

@@ -29,123 +29,99 @@
 
       <!-- Category Filters -->
       <div class="flex gap-4 text-sm">
-        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-hamburger"></i> อาหารคาว</div>
-        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-cupcake"></i> ขนมหวาน</div>
-        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-shopping-bag"></i> ของชำ</div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-hamburger"></i>
+          <a href="?category=อาหารคาว" class="text-gray-700">อาหารคาว</a>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-cupcake"></i>
+          <a href="?category=ขนมหวาน" class="text-gray-700">ขนมหวาน</a>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-shopping-bag"></i>
+          <a href="?category=ของชำ" class="text-gray-700">ของชำ</a>
+        </div>
       </div>
+
 
     <!-- Promotion Banner -->
     <div class="bg-[#ffeef4] text-[#efaca4] p-4 rounded-2xl shadow text-center font-medium">
       🎁 รับ <strong>ฟรีป๊อปคอร์น + เครื่องดื่ม</strong> เมื่อสั่งครบ 300 บาท
     </div>
 
-    <!-- Menu Cards -->
-    <div>
-      <h2 class="text-xl font-bold text-[#3e8340] mb-3">กล่องสุ่มสำหรับคุณ</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        {% for item in menu_items %}
-        <div class="bg-[#fff0f5] rounded-2xl shadow p-4 w-[280px] text-sm mx-auto">
-
-          <!-- รูปภาพ -->
-          <div class="aspect-square rounded-xl overflow-hidden mb-3">
-            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-full object-cover" />
+<!-- Menu Cards -->
+<div>
+  <h2 class="text-xl font-bold text-[#3e8340] mb-3">กล่องสุ่มสำหรับคุณ</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+    {% for item in menu_items %}
+    <div class="bg-[#fff0f5] rounded-2xl shadow p-4 w-[280px] text-sm mx-auto">
+      <!-- รูปภาพ -->
+      <div class="aspect-square rounded-xl overflow-hidden mb-3">
+        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-full object-cover" />
+      </div>
+    
+      <!-- ชื่อเมนู -->
+      <h3 class="text-base font-bold text-gray-900 mb-1">{{ item.name }}</h3>
+    
+      <!-- ส่วนลด + ชื่อร้าน -->
+      <div class="flex items-center gap-2 text-sm mb-2">
+        <span class="bg-red-500 text-white font-bold text-xs px-2 py-0.5 rounded">-{{ item.discount_percent }}%</span>
+        <span class="truncate text-gray-700">{{ item.restaurant.name }}</span>
+      </div>
+    
+      <!-- เวลา / คะแนน -->
+      <div class="flex justify-between text-xs text-gray-600 mb-1 items-start">
+        <div>
+          <div class="flex items-center gap-1">
+            <i class="fi fi-sr-clock-three text-[#1D1D1B] text-sm"></i>
+            {{ item.restaurant.open_time }} - {{ item.restaurant.close_time }}
           </div>
-        
-          <!-- ชื่อเมนู -->
-          <h3 class="text-base font-bold text-gray-900 mb-1">{{ item.name }}</h3>
-        
-          <!-- ส่วนลด + ชื่อร้าน -->
-          <div class="flex items-center gap-2 text-sm mb-2">
-            <span class="bg-red-500 text-white font-bold text-xs px-2 py-0.5 rounded">-{{ item.discount_percent }}%</span>
-            <span class="truncate text-gray-700">{{ item.restaurant.name }}</span>
+          <div class="flex items-center gap-1">
+            <i class="fi fi-sr-star text-[#3e8340] text-sm"></i>
+            {{ item.restaurant.rating|floatformat:1 }}
           </div>
-        
-          <!-- เวลา / คะแนน -->
-          <div class="flex justify-between text-xs text-gray-600 mb-1 items-start">
-            <div>
-              <div class="flex items-center gap-1">
-                <i class="fi fi-sr-clock-three text-[#1D1D1B] text-sm"></i>
-                {{ item.restaurant.open_time }} - {{ item.restaurant.close_time }}
-              </div>
-              <div class="flex items-center gap-1">
-                <i class="fi fi-sr-star text-[#3e8340] text-sm"></i>
-                {{ item.restaurant.rating|floatformat:1 }}
-              </div>
-              <div class="flex items-center gap-1">
-                <i class="fi fi-sr-land-layer-location text-[#1D1D1B] text-sm"></i>
-                {{ item.restaurant.distance|default:"~5" }} กม
-              </div>
-            </div>
-
-            <!-- กล่องราคาสินค้า -->
-            <div class="flex flex-col justify-center items-center gap-0.3 bg-pink-200 px-3 py-1.5 rounded-lg w-fit text-right text-sm">
-              <span class="line-through text-gray-500 text-xs leading-none">฿{{ item.price|floatformat:0 }}</span>
-              <span class="text-xl font-bold text-gray-900 leading-tight">฿{{ item.final_price|floatformat:0 }}</span>
-            </div>
+          <div class="flex items-center gap-1">
+            <i class="fi fi-sr-land-layer-location text-[#1D1D1B] text-sm"></i>
+            {{ item.restaurant.distance|default:"~5" }} กม
           </div>
-        
-          <!-- Allergens -->
-          <div class="text-xs text-gray-500 mb-2 space-x-1">
-            {% for allergen in item.allergens.all %}
-              <span class="inline-block bg-red-100 text-red-600 px-2 py-0.5 rounded">{{ allergen.name }}</span>
-            {% endfor %}
-          </div>
-        
-          <!-- ฟอร์มเพิ่มสินค้า -->
-          <form method="POST" action="{% url 'add_to_cart' item.id %}" class="flex justify-between items-center">
-            {% csrf_token %}
-        
-            <!-- ปุ่มจำนวน -->
-            <div class="flex items-center gap-2">
-              <div class="flex items-center bg-white border border-gray-400 rounded-full px-2 py-1">
-                <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="decrease">−</button>
-                <input type="number" name="quantity" value="1" min="1"
-                       class="quantity-input w-10 h-6 text-center border-none outline-none font-semibold text-base text-gray-800 leading-none" />
-                <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="increase">+</button>
-              </div>
-            </div>
-        
-            <!-- ปุ่มตะกร้า -->
-            <button type="submit" class="bg-black text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition">
-              <i class="fi fi-sr-shopping-cart text-[#ffffff] text-sm"></i>
-              <span>เพิ่มในตะกร้า</span>
-            </button>            
-          </form>
         </div>
-            
-        {% endfor %}
 
-  </div>
-
-    <!-- Banner Upload Placeholder -->
-    <div class="bg-white rounded-xl p-4 shadow text-center text-gray-500 border-dashed border-2 border-gray-300">
-      📸 พื้นที่สำหรับป้ายแบนเนอร์ (แอดมินอัปโหลดได้)
-    </div>
-
-    <!-- Recommended Restaurants -->
-    <div>
-      <h2 class="text-xl font-bold mb-3">ร้านอาหารแนะนำ</h2>
-      <div class="flex gap-4 overflow-x-auto">
-        {% for restaurant in restaurants %}
-        <div class="bg-white p-3 min-w-[180px] rounded-2xl shadow text-center">
-          <img src="{{ restaurant.image.url }}" class="w-full h-24 object-cover rounded-xl mb-1" />
-          <h4 class="font-medium">{{ restaurant.name }}</h4>
-          <p class="text-xs text-gray-600"><i class="fi fi-sr-star text-yellow-500"></i> {{ restaurant.rating|floatformat:1 }}</p>
-          <p class="text-xs text-gray-500">{{ restaurant.menu_items.all.0.name }}</p>
+        <!-- กล่องราคาสินค้า -->
+        <div class="flex flex-col justify-center items-center gap-0.3 bg-pink-200 px-3 py-1.5 rounded-lg w-fit text-right text-sm">
+          <span class="line-through text-gray-500 text-xs leading-none">฿{{ item.price|floatformat:0 }}</span>
+          <span class="text-xl font-bold text-gray-900 leading-tight">฿{{ item.final_price|floatformat:0 }}</span>
         </div>
+      </div>
+    
+      <!-- Allergens -->
+      <div class="text-xs text-gray-500 mb-2 space-x-1">
+        {% for allergen in item.allergens.all %}
+          <span class="inline-block bg-red-100 text-red-600 px-2 py-0.5 rounded">{{ allergen.name }}</span>
         {% endfor %}
       </div>
+    
+      <!-- ฟอร์มเพิ่มสินค้า -->
+      <form method="POST" action="{% url 'add_to_cart' item.id %}" class="flex justify-between items-center">
+  {% csrf_token %}
+  <!-- ปุ่มจำนวน -->
+  <div class="flex items-center gap-2">
+    <div class="flex items-center bg-white border border-gray-400 rounded-full px-2 py-1">
+      <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="decrease">−</button>
+      <input type="number" name="quantity" value="1" min="1"
+             class="quantity-input w-10 h-6 text-center border-none outline-none font-semibold text-base text-gray-800 leading-none" />
+      <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="increase">+</button>
     </div>
-
-    <!-- Donate Section -->
-    <div class="text-center text-sm text-gray-400">
-      🙏 พื้นที่สำหรับแสดงระบบบริจาค (future section)
-    </div>
-
   </div>
-  {% endblock %}
+  
+  <!-- ปุ่มเพิ่มสินค้า -->
+  <button type="submit" class="bg-black text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition">
+    <i class="fi fi-sr-shopping-cart text-[#ffffff] text-sm"></i>
+    <span>เพิ่มในตะกร้า</span>
+  </button>            
+</form>
 
-<!-- JS for quantity buttons -->
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.quantity-btn').forEach(button => {
@@ -159,3 +135,53 @@
     });
   });
 </script>
+
+
+    <!-- Banner Upload Placeholder -->
+    <div class="bg-white rounded-xl p-4 shadow text-center text-gray-500 border-dashed border-2 border-gray-300">
+      📸 พื้นที่สำหรับป้ายแบนเนอร์ (แอดมินอัปโหลดได้)
+    </div>
+
+    <!-- ร้านอาหารแนะนำ -->
+<div>
+  <h2 class="text-xl font-bold mb-3">ร้านอาหารแนะนำ</h2>
+  <div class="flex gap-4 overflow-x-auto">
+    {% for restaurant in restaurants %}
+      <div class="bg-white p-4 min-w-[280px] rounded-2xl shadow text-left flex-shrink-0">
+        <!-- ใช้ flex เพื่อจัดเรียงรูปภาพด้านซ้ายและข้อมูลด้านขวา -->
+        <div class="flex gap-4">
+          <!-- รูปภาพร้านอาหาร -->
+          <img src="{{ restaurant.image.url }}" class="w-24 h-24 object-cover rounded-xl" alt="{{ restaurant.name }}" />
+          
+          <!-- ข้อมูลร้านอาหาร (ชื่อ, รีวิว, เวลาเปิด/ปิด) -->
+          <div class="flex flex-col justify-between">
+            <!-- ชื่อร้านอาหาร -->
+            <h4 class="font-medium text-lg mb-2">{{ restaurant.name }}</h4>
+
+            <!-- รีวิวร้าน -->
+            <div class="flex items-center gap-1 mb-2">
+              <i class="fi fi-sr-star text-yellow-500 text-sm"></i>
+              <span>{{ restaurant.rating|floatformat:1 }}</span>
+            </div>
+
+            <!-- เวลาเปิด/ปิด -->
+            <div class="flex items-center gap-1">
+              <i class="fi fi-sr-clock-three text-[#1D1D1B] text-sm"></i>
+              <span>{{ restaurant.open_time }} - {{ restaurant.close_time }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>ไม่มีร้านอาหารแนะนำในขณะนี้</p>
+    {% endfor %}
+  </div>
+</div>
+
+    <!-- Donate Section -->
+    <div class="text-center text-sm text-gray-400">
+      🙏 พื้นที่สำหรับแสดงระบบบริจาค (future section)
+    </div>
+
+  </div>
+  {% endblock %}

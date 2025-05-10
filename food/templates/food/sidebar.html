@@ -1,0 +1,41 @@
+<aside class="bg-[#f7efda] w-[320px] p-6 shrink-0 h-full border-l border-gray-200">
+  
+  <!-- ข้อมูลผู้ใช้ -->
+  <div class="flex flex-col items-center mb-6">
+    <img src="https://via.placeholder.com/80" alt="User Profile" class="rounded-full w-20 h-20 mb-3">
+    <h4 class="font-medium text-lg mb-2">{{ user.username }}</h4>
+    <p class="text-sm text-gray-500">ลูกค้า VIP</p>
+  </div>
+
+<!-- สรุปรายการสินค้าในตะกร้า -->
+<div class="flex flex-col mb-6">
+  <div class="flex items-center mb-3">
+    <h3 class="text-xl font-bold mr-2">ตะกร้าสินค้า</h3>  <!-- เพิ่ม mr-2 เพื่อเว้นระยะห่าง -->
+    {% if cart_count > 0 %}
+      <span class="badge text-white bg-red-500 px-2 py-1 rounded-full">
+        {{ cart_count }}
+      </span>
+    {% else %}
+      <p class="text-gray-500">ไม่มีสินค้าภายในตะกร้า</p>
+    {% endif %}
+  </div>
+</div>
+
+
+  <!-- วิธีการชำระเงิน -->
+  <div class="mb-6">
+    <h4 class="text-lg font-medium mb-2">เลือกวิธีการชำระเงิน</h4>
+    <select class="w-full p-2 border border-gray-300 rounded-md">
+      <option value="credit-card">บัตรเครดิต</option>
+      <option value="bank-transfer">การโอนผ่านธนาคาร</option>
+      <option value="paypal">PayPal</option>
+    </select>
+  </div>
+
+  <!-- ปุ่มยืนยันคำสั่งซื้อ -->
+  <div class="flex justify-center">
+    <button class="bg-blue-600 text-white px-6 py-2 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
+      ยืนยันคำสั่งซื้อ
+    </button>
+  </div>
+</aside>

@@ -70,7 +70,7 @@ class Restaurant(models.Model):
         return self.name
 
     class Meta:
-        verbose_name_plura6l = "Restaurants"
+        verbose_name_plural = "Restaurants"
 
 
 # -------------------
@@ -79,7 +79,7 @@ class Restaurant(models.Model):
 
 class MenuItem(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menus')
-    category = models.ForeignKey(FoodCategory, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(FoodCategory, on_delete=models.SET_NULL, null=True, blank=True) 
     name = models.CharField(max_length=255)
     price = models.PositiveIntegerField()
     discount_percent = models.PositiveIntegerField(default=0)

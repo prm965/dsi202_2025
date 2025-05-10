@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import Restaurant, MenuItem, Allergen, CartItem, Order, OrderItem
+from .models import Restaurant, MenuItem, Allergen, CartItem, Order, OrderItem, FoodCategory
 import re
 from django.utils.safestring import mark_safe
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
     list_display = ['name', 'latitude', 'longitude']
-    readonly_fields = ['map_preview']  # ✅ แสดง preview
+    readonly_fields = ['map_preview']  # แสดง preview
     fields = ['name', 'google_maps_url', 'latitude', 'longitude', 'open_time', 'close_time', 'image', 'rating', 'map_preview']  # เปลี่ยนจาก 'map_url' เป็น 'google_maps_url'
 
     def save_model(self, request, obj, form, change):
@@ -26,9 +26,19 @@ class RestaurantAdmin(admin.ModelAdmin):
         return "ยังไม่มีพิกัด"
     map_preview.short_description = "พรีวิวแผนที่"
 
+@admin.register(MenuItem)  # ลงทะเบียนเพียงครั้งเดียว
+class MenuItemAdmin(admin.ModelAdmin):
+    list_display = ['name', 'restaurant', 'category', 'price', 'final_price']
+    list_filter = ['category', 'restaurant']
+    search_fields = ['name']
+    fields = ['restaurant', 'category', 'name', 'price', 'discount_percent', 'final_price', 'allergens', 'description', 'image']
 
-# Register others
-admin.site.register(MenuItem)
+@admin.register(FoodCategory)
+class FoodCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name']  # จะแสดงชื่อประเภทอาหารใน Admin
+    search_fields = ['name'] 
+    
+# Register other models
 admin.site.register(Allergen)
 admin.site.register(CartItem)
 admin.site.register(Order)

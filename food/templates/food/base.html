@@ -15,7 +15,7 @@
     <link href="{% static 'uicons/css/uicons-solid-rounded.css' %}" rel="stylesheet">
 
     <!-- ✅ Custom styles -->
-    <link href="{% static 'css/custom.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
 
     <style>
       * {
@@ -33,6 +33,78 @@
       input[type=number] {
         -moz-appearance: textfield;
       }
+
+      /* ✅ โค้งมนสำหรับมุมขวาของ Sidebar */
+      .sidebar {
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
+        transition: width 0.3s ease;
+        width: 80px; /* เมื่อหด Sidebar */
+      }
+
+      /* ✅ สไตล์สำหรับการย่อและขยาย Sidebar */
+      .sidebar-expanded {
+        width: 250px; /* เมื่อขยาย Sidebar */
+      }
+
+      /* ✅ แสดงไอคอนกลางในแนวตั้ง */
+      .sidebar .menu-item {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start; /* จัดตำแหน่งชิดซ้าย */
+        gap: 10px;
+        padding: 10px 0; /* ลดระยะห่างระหว่างหัวข้อ */
+        text-align: center;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .sidebar .menu-item i {
+        font-size: 24px;
+      }
+
+      .sidebar .menu-item span {
+        transition: opacity 0.3s;
+        opacity: 0; /* ซ่อนข้อความเมื่อ Sidebar หด */
+      }
+
+      /* เมื่อ Sidebar ขยาย */
+      .sidebar-expanded .menu-item span {
+        opacity: 1; /* แสดงข้อความ */
+      }
+
+      /* เมื่อ Sidebar หด */
+      .sidebar .menu-item.collapsed span {
+        display: none;
+      }
+
+      /* แถบสีที่แสดงว่ากำลังอยู่ในหน้าปัจจุบัน */
+      .active {
+        background-color: #ffffff;
+        border-left: 4px solid #3b82f6; /* สีของแถบ */
+        color: #000;
+      }
+
+      /* ✅ ลดระยะห่างระหว่างหัวข้อ */
+      nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px; /* ระยะห่างระหว่างหัวข้อ */
+      }
+
+      /* ✅ ทำให้ "ออกจากระบบ" อยู่ด้านล่างสุด */
+      .logout {
+        margin-top: auto; /* ให้ "ออกจากระบบ" อยู่ที่ด้านล่างสุด */
+        display: flex;
+        justify-content: flex-start; /* จัดตำแหน่งชิดซ้าย */
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+      }
+
+      .logout i {
+        font-size: 24px;
+      }
+
     </style>
 </head>
 <body class="bg-[#ffffff] text-gray-800 m-0 p-0 overflow-hidden">
@@ -41,31 +113,31 @@
   <div class="w-screen h-screen flex overflow-hidden">
 
     <!-- 🔹 Sidebar Left -->
-    <aside class="bg-[#efaca5] text-white w-[250px] flex flex-col justify-between px-4 py-6 shrink-0">
+    <aside id="sidebar" class="sidebar bg-[#efaca5] text-white px-4 py-6 shrink-0 flex flex-col">
       <div class="space-y-5">
-        <div class="text-xl font-bold mb-6">imsuk</div>
-        <nav class="space-y-4 text-sm">
-          <a href="#" class="flex items-center gap-3 hover:text-gray-200">
-            <i class="fi fi-sr-home"></i> หน้าแรก
+        <img src="{% static 'images/imsuk-logo.svg' %}" alt="imsuk logo">
+        <nav class="space-y-2 text-m">
+          <a href="home.html" class="menu-item" id="home-link">
+            <i class="fi fi-sr-home"></i>
+            <span>หน้าแรก</span>
           </a>
-          <a href="#" class="flex items-center gap-3 hover:text-gray-200">
-            <i class="fi fi-sr-gift"></i> โปรโมชั่น
+          <a href="promotion.html" class="menu-item" id="promotion-link">
+            <i class="fi fi-sr-gift"></i>
+            <span>โปรโมชั่น</span>
           </a>
-          <a href="#" class="flex items-center gap-3 hover:text-gray-200">
-            <i class="fi fi-sr-credit-card"></i> การชำระเงิน
+          <a href="pay.html" class="menu-item" id="pay-link">
+            <i class="fi fi-sr-credit-card"></i>
+            <span>การชำระเงิน</span>
           </a>
-          <a href="#" class="flex items-center gap-3 hover:text-gray-200">
-            <i class="fi fi-sr-envelope"></i> ข้อความ
+          <a href="message.html" class="menu-item" id="message-link">
+            <i class="fi fi-sr-envelope"></i>
+            <span>ข้อความ</span>
           </a>
-          <a href="#" class="flex items-center gap-3 hover:text-gray-200">
-            <i class="fi fi-sr-user"></i> โปรไฟล์ผู้ใช้
+          <a href="profile.html" class="menu-item" id="profile-link">
+            <i class="fi fi-sr-user"></i>
+            <span>โปรไฟล์ผู้ใช้</span>
           </a>
         </nav>
-      </div>
-      <div>
-        <a href="#" class="flex items-center gap-3 text-sm hover:text-gray-200">
-          <i class="fi fi-sr-exit"></i> ออกจากระบบ
-        </a>
       </div>
     </aside>
 
@@ -75,12 +147,48 @@
     </main>
 
     <!-- 🔹 Sidebar Right -->
-    <aside class="bg-[#f7efda] w-[320px] p-6 shrink-0 h-full border-l border-gray-200">
-      <!-- ส่วนที่ 3: โปรไฟล์ผู้ใช้ + ตะกร้า -->
-      {% block sidebar %}{% endblock %}
+    {% include 'food/sidebar.html' %} <!-- เพิ่ม sidebar ที่นี่ -->
     </aside>
 
   </div>
+
+  <script>
+    // เปิดการขยาย sidebar เมื่อเมาส์เข้าใกล้
+    const sidebar = document.getElementById("sidebar");
+
+    sidebar.addEventListener("mouseenter", () => {
+      sidebar.classList.add("sidebar-expanded");
+    });
+
+    sidebar.addEventListener("mouseleave", () => {
+      if (!sidebar.classList.contains("active")) {
+        sidebar.classList.remove("sidebar-expanded");
+      }
+    });
+
+    // ตั้งค่า active page
+    document.addEventListener('DOMContentLoaded', function() {
+      const currentPath = window.location.pathname.split('/').pop();
+
+      // ลบ class 'active' จากทุกเมนู
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      // เพิ่ม class 'active' ให้กับเมนูที่ตรงกับไฟล์ของหน้า
+      if (currentPath === 'home.html') {
+        document.getElementById('home-link').classList.add('active');
+      } else if (currentPath === 'promotion.html') {
+        document.getElementById('promotion-link').classList.add('active');
+      } else if (currentPath === 'pay.html') {
+        document.getElementById('pay-link').classList.add('active');
+      } else if (currentPath === 'message.html') {
+        document.getElementById('message-link').classList.add('active');
+      } else if (currentPath === 'profile.html') {
+        document.getElementById('profile-link').classList.add('active');
+      }
+    });
+  </script>
 
 </body>
 </html>

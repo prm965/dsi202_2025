@@ -9,3 +9,9 @@ def cart_context(request):
             'total_cart_price': total
         }
     return {}
+
+def cart_count(request):
+    cart = request.session.get('cart', {})
+    total_quantity = sum(item['quantity'] for item in cart.values())  # รวมจำนวนสินค้าทั้งหมดในตะกร้า
+    return {'cart_count': total_quantity}
+

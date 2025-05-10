@@ -8,17 +8,25 @@
     <div class="flex-1 p-6 space-y-6 bg-[#f9f6fb]">
 
       <!-- Greeting and Address -->
-      <div class="flex justify-between items-center">
-        <div>
-          <h1 class="text-2xl font-bold text-[#3e8340]">สวัสดีคุณ {{ user.username }}</h1>
-          <a href="#" class="text-sm text-blue-500 underline">📍 {{ user.profile.address|default:'ยังไม่มีที่อยู่' }}</a>
-        </div>
-        <form method="GET" action="" class="w-1/3">
-          <input type="text" name="q" value="{{ request.GET.q }}" placeholder="ค้นหาอาหาร / ร้านอาหาร"
-                 class="w-full border rounded-full px-4 py-2 focus:outline-none shadow-sm text-sm" />
-        </form>
-      </div>
-  
+<div class="flex justify-between items-center">
+  <div>
+    <h1 class="text-2xl font-bold text-[#3e8340]">สวัสดีคุณ {{ user.username }}</h1>
+    <a href="#" class="text-sm text-blue-500 underline">📍 {{ user.profile.address|default:'ยังไม่มีที่อยู่' }}</a>
+  </div>
+  <form method="GET" action="" class="w-1/3 flex items-center border rounded-full px-4 py-2 bg-white">
+    <!-- Search icon -->
+    <button type="submit" class="text-gray-500 mr-2 flex items-center justify-center"> <!-- Added flex to center -->
+      <i class="fi fi-sr-search"></i> <!-- Search icon using class -->
+    </button>
+    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="ค้นหาอาหาร / ร้านอาหาร"
+           class="w-full text-sm focus:outline-none" />
+    <!-- Filter dropdown (for future) -->
+    <button type="button" class="ml-2 text-gray-500 flex items-center justify-center"> <!-- Added flex to center -->
+      <i class="fi fi-sr-filter"></i> <!-- Filter icon using class -->
+    </button>
+  </form>
+</div>
+
       <!-- Category Filters -->
       <div class="flex gap-4 text-sm">
         <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-hamburger"></i> อาหารคาว</div>
@@ -31,32 +39,83 @@
       🎁 รับ <strong>ฟรีป๊อปคอร์น + เครื่องดื่ม</strong> เมื่อสั่งครบ 300 บาท
     </div>
 
-    <!-- Menu Items -->
+    <!-- Menu Cards -->
     <div>
-      <h2 class="text-xl font-bold mb-3">กล่องสุ่มสำหรับคุณ</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <h2 class="text-xl font-bold text-[#3e8340] mb-3">กล่องสุ่มสำหรับคุณ</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {% for item in menu_items %}
-        <div class="bg-white p-3 rounded-2xl shadow text-sm space-y-2">
-          <div class="aspect-square overflow-hidden rounded-xl">
+        <div class="bg-[#fff0f5] rounded-2xl shadow p-4 w-[280px] text-sm mx-auto">
+
+          <!-- รูปภาพ -->
+          <div class="aspect-square rounded-xl overflow-hidden mb-3">
             <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-full object-cover" />
           </div>
-          <h3 class="font-bold text-gray-800">{{ item.name }}</h3>
-          <p class="text-xs text-gray-500">{{ item.restaurant.name }}</p>
-          <div class="text-sm flex justify-between items-center">
-            <div class="space-y-1">
-              <p class="text-xs text-gray-500 flex items-center gap-1"><i class="fi fi-sr-clock-three text-green-500"></i> {{ item.restaurant.open_time }} - {{ item.restaurant.close_time }}</p>
-              <p class="text-xs text-gray-500 flex items-center gap-1"><i class="fi fi-sr-star text-yellow-500"></i> {{ item.restaurant.rating|floatformat:1 }}</p>
-              <p class="text-xs text-gray-500 flex items-center gap-1"><i class="fi fi-sr-land-layer-location text-pink-500"></i> {{ item.restaurant.distance|default:'~5' }} กม</p>
+        
+          <!-- ชื่อเมนู -->
+          <h3 class="text-base font-bold text-gray-900 mb-1">{{ item.name }}</h3>
+        
+          <!-- ส่วนลด + ชื่อร้าน -->
+          <div class="flex items-center gap-2 text-sm mb-2">
+            <span class="bg-red-500 text-white font-bold text-xs px-2 py-0.5 rounded">-{{ item.discount_percent }}%</span>
+            <span class="truncate text-gray-700">{{ item.restaurant.name }}</span>
+          </div>
+        
+          <!-- เวลา / คะแนน -->
+          <div class="flex justify-between text-xs text-gray-600 mb-1 items-start">
+            <div>
+              <div class="flex items-center gap-1">
+                <i class="fi fi-sr-clock-three text-[#1D1D1B] text-sm"></i>
+                {{ item.restaurant.open_time }} - {{ item.restaurant.close_time }}
+              </div>
+              <div class="flex items-center gap-1">
+                <i class="fi fi-sr-star text-[#3e8340] text-sm"></i>
+                {{ item.restaurant.rating|floatformat:1 }}
+              </div>
+              <div class="flex items-center gap-1">
+                <i class="fi fi-sr-land-layer-location text-[#1D1D1B] text-sm"></i>
+                {{ item.restaurant.distance|default:"~5" }} กม
+              </div>
             </div>
-            <div class="text-right bg-pink-200 px-3 py-1.5 rounded-lg">
-              <div class="line-through text-xs text-gray-500">฿{{ item.price|floatformat:0 }}</div>
-              <div class="text-xl font-bold text-gray-900">฿{{ item.final_price|floatformat:0 }}</div>
+
+            <!-- กล่องราคาสินค้า -->
+            <div class="flex flex-col justify-center items-center gap-0.3 bg-pink-200 px-3 py-1.5 rounded-lg w-fit text-right text-sm">
+              <span class="line-through text-gray-500 text-xs leading-none">฿{{ item.price|floatformat:0 }}</span>
+              <span class="text-xl font-bold text-gray-900 leading-tight">฿{{ item.final_price|floatformat:0 }}</span>
             </div>
           </div>
+        
+          <!-- Allergens -->
+          <div class="text-xs text-gray-500 mb-2 space-x-1">
+            {% for allergen in item.allergens.all %}
+              <span class="inline-block bg-red-100 text-red-600 px-2 py-0.5 rounded">{{ allergen.name }}</span>
+            {% endfor %}
+          </div>
+        
+          <!-- ฟอร์มเพิ่มสินค้า -->
+          <form method="POST" action="{% url 'add_to_cart' item.id %}" class="flex justify-between items-center">
+            {% csrf_token %}
+        
+            <!-- ปุ่มจำนวน -->
+            <div class="flex items-center gap-2">
+              <div class="flex items-center bg-white border border-gray-400 rounded-full px-2 py-1">
+                <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="decrease">−</button>
+                <input type="number" name="quantity" value="1" min="1"
+                       class="quantity-input w-10 h-6 text-center border-none outline-none font-semibold text-base text-gray-800 leading-none" />
+                <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="increase">+</button>
+              </div>
+            </div>
+        
+            <!-- ปุ่มตะกร้า -->
+            <button type="submit" class="bg-black text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition">
+              <i class="fi fi-sr-shopping-cart text-[#ffffff] text-sm"></i>
+              <span>เพิ่มในตะกร้า</span>
+            </button>            
+          </form>
         </div>
+            
         {% endfor %}
-      </div>
-    </div>
+
+  </div>
 
     <!-- Banner Upload Placeholder -->
     <div class="bg-white rounded-xl p-4 shadow text-center text-gray-500 border-dashed border-2 border-gray-300">
@@ -85,3 +144,18 @@
 
   </div>
   {% endblock %}
+
+<!-- JS for quantity buttons -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const input = button.closest('form').querySelector('.quantity-input');
+        let value = parseInt(input.value);
+        if (button.dataset.type === 'increase') value++;
+        if (button.dataset.type === 'decrease' && value > 1) value--;
+        input.value = value;
+      });
+    });
+  });
+</script>

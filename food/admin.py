@@ -2,6 +2,9 @@ from django.contrib import admin
 from .models import Restaurant, MenuItem, Allergen, CartItem, Order, OrderItem, FoodCategory
 import re
 from django.utils.safestring import mark_safe
+from django.contrib.auth.models import User
+
+admin.site.register(User)
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):

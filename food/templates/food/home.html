@@ -99,27 +99,31 @@
     
       <!-- ฟอร์มเพิ่มสินค้า -->
       <form method="POST" action="{% url 'add_to_cart' item.id %}" class="flex justify-between items-center">
-  {% csrf_token %}
-  <!-- ปุ่มจำนวน -->
-  <div class="flex items-center gap-2">
-    <div class="flex items-center bg-white border border-gray-400 rounded-full px-2 py-1">
-      <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="decrease">−</button>
-      <input type="number" name="quantity" value="1" min="1"
-             class="quantity-input w-10 h-6 text-center border-none outline-none font-semibold text-base text-gray-800 leading-none" />
-      <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="increase">+</button>
-    </div>
-  </div>
-  
-  <!-- ปุ่มเพิ่มสินค้า -->
-  <button type="submit" class="bg-black text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition">
-    <i class="fi fi-sr-shopping-cart text-[#ffffff] text-sm"></i>
-    <span>เพิ่มในตะกร้า</span>
-  </button>            
-</form>
 
-    </div>
-    {% endfor %}
+      {% csrf_token %}
+            <!-- ปุ่มจำนวน -->
+            <div class="flex items-center gap-2">
+              <div class="flex items-center bg-white border border-gray-400 rounded-full px-2 py-1">
+                <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="decrease">−</button>
+                <input type="number" name="quantity" value="1" min="1"
+                       class="quantity-input w-10 h-6 text-center border-none outline-none font-semibold text-base text-gray-800 leading-none" />
+                <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="increase">+</button>
+              </div>
+            
+        
+            <!-- ปุ่มตะกร้า -->
+            <button type="submit" class="bg-black text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition">
+              <i class="fi fi-sr-shopping-cart text-[#ffffff] text-sm"></i>
+              <span>เพิ่มในตะกร้า</span>
+            </button> 
+            </div>           
+          </form>
+        </div>
+            
+        {% endfor %}
+
   </div>
+
 </div>
 
 <script>

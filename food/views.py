@@ -3,6 +3,45 @@ from django.contrib.auth.decorators import login_required
 from .models import Restaurant, MenuItem, FoodCategory, CartItem
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+
+
+def service_details(request):
+    return render(request, 'service-details.html')
+
+def starter_page(request):
+    return render(request, 'starter-page.html')
+
+def signin(request):
+    return render(request, 'food/signin.html')
+
+
+def index(request):
+    query = request.GET.get("q", "")
+    category_name = request.GET.get('category')
+
+    if query:
+        menu_items = MenuItem.objects.filter(name__icontains=query)
+    elif category_name:
+        category = get_object_or_404(FoodCategory, name=category_name)
+        menu_items = MenuItem.objects.filter(category=category)
+    else:
+        menu_items = MenuItem.objects.all()
+
+    if 'cart' not in request.session:
+        request.session['cart'] = {}
+
+    # ✅ อัปเดตการนับจำนวนสินค้าทั้งหมด
+    request.session['cart_count'] = sum(item['quantity'] for item in request.session['cart'].values())
+    request.session.modified = True
+
+    return render(request, "food/index.html", {
+        "menu_items": menu_items,
+        "restaurants": Restaurant.objects.all(),
+        "cart": request.session.get('cart', {}),
+        "cart_count": request.session.get('cart_count', 0)
+    })
 
 def home(request):
     query = request.GET.get("q", "")
@@ -29,6 +68,21 @@ def home(request):
         "cart": request.session.get('cart', {}),
         "cart_count": request.session.get('cart_count', 0)
     })
+
+def signin(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, "Username or password is incorrect.")
+    
+    return render(request, 'food/signin.html')
+
 
 def get_cart_count(request):
     """

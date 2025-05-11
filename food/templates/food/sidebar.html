@@ -7,20 +7,52 @@
     <p class="text-sm text-gray-500">ลูกค้า VIP</p>
   </div>
 
-<!-- สรุปรายการสินค้าในตะกร้า -->
+  <!-- สรุปรายการสินค้าในตะกร้า -->
 <div class="flex flex-col mb-6">
-  <div class="flex items-center mb-3">
-    <h3 class="text-xl font-bold mr-2">ตะกร้าสินค้า</h3>  <!-- เพิ่ม mr-2 เพื่อเว้นระยะห่าง -->
-    {% if cart_count > 0 %}
-      <span class="badge text-white bg-red-500 px-2 py-1 rounded-full">
-        {{ cart_count }}
-      </span>
-    {% else %}
-      <p class="text-gray-500">ไม่มีสินค้าภายในตะกร้า</p>
-    {% endif %}
+
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center">
+      <i class="fi fi-sr-shopping-cart text-xl mr-2"></i>
+      <h3 class="text-xl font-bold">ตะกร้าสินค้า</h3>
+    </div>
+    <span class="badge text-white bg-red-500 px-2 py-1 rounded-full">
+      0
+    </span>
   </div>
+
+  <!-- ✅ ย้าย "ไม่มีสินค้าในตะกร้า" มาชิดกับหัวข้อ -->
+  <div id="empty-cart-message" class="text-gray-500 mb-3">
+    ไม่มีสินค้าในตะกร้า
+  </div>
+
 </div>
 
+
+  {% if request.session.cart %}
+    {% for item_id, item in request.session.cart.items %}
+      <div id="cart-item-{{ item_id }}" class="flex justify-between mb-2">
+        <span>{{ item.name }} x</span>
+
+        <form method="POST" class="flex items-center gap-2" id="cart-form-{{ item_id }}">
+          {% csrf_token %}
+          <button type="button" class="quantity-btn bg-gray-200 px-2 py-1 rounded-full" data-action="decrease" data-item-id="{{ item_id }}">−</button>
+          <input type="number" value="{{ item.quantity }}" class="w-12 text-center quantity-input" readonly />
+          <button type="button" class="quantity-btn bg-gray-200 px-2 py-1 rounded-full" data-action="increase" data-item-id="{{ item_id }}">+</button>
+        </form>
+
+        <span>฿{{ item.price|floatformat:0 }}</span>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>ไม่มีสินค้าภายในตะกร้า</p>
+  {% endif %}
+
+  <!-- ปุ่มล้างตะกร้า -->
+<div class="flex justify-center mb-4">
+  <button id="clear-cart-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition">
+    ล้างตะกร้า
+  </button>
+</div>
 
   <!-- วิธีการชำระเงิน -->
   <div class="mb-6">
@@ -38,4 +70,119 @@
       ยืนยันคำสั่งซื้อ
     </button>
   </div>
+
+  
 </aside>
+<script>
+  // 🔄 ฟังก์ชันสำหรับรีเฟรชตัวเลขในตะกร้า
+  const refreshCartCount = () => {
+    fetch('/get-cart-count/')
+      .then(response => response.json())
+      .then(data => {
+        // อัปเดตตัวเลขที่แสดงใน Badge
+        const badgeElement = document.querySelector('.badge');
+        badgeElement.textContent = data.cart_count > 0 ? data.cart_count : 0;
+      })
+      .catch(error => console.error('Error:', error));
+  };
+
+  // 🛒 เมื่อ Document พร้อมใช้งาน
+  document.addEventListener('DOMContentLoaded', () => {
+    // 🔄 โหลดตัวเลขจาก Session ครั้งแรก
+    refreshCartCount();
+
+    // 🛠️ จัดการกับปุ่มเพิ่มและลดสินค้า
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+
+        const action = this.getAttribute('data-action');
+        const itemId = this.getAttribute('data-item-id');
+        const form = document.getElementById(`cart-form-${itemId}`);
+
+        // 🔄 ส่งข้อมูลการอัปเดตไปที่ Server
+        fetch(`/update-cart/${itemId}/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': form.querySelector('[name="csrfmiddlewaretoken"]').value
+          },
+          body: new URLSearchParams({ action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.should_remove) {
+            // 🗑️ ถ้าจำนวนเป็น 0 ให้แสดง Popup
+            const confirmRemove = confirm(`คุณแน่ใจใช่ไหมที่จะลบ ${data.item_name} ออกจากตะกร้า?`);
+            if (confirmRemove) {
+              fetch(`/remove-from-cart/${itemId}/`, {
+                method: 'POST',
+                headers: {
+                  'X-CSRFToken': form.querySelector('[name="csrfmiddlewaretoken"]').value
+                }
+              })
+              .then(() => {
+                document.getElementById(`cart-item-${itemId}`).remove(); // 🔥 ลบออกจาก DOM
+                refreshCartCount(); // 🔄 อัปเดตตัวเลขในตะกร้า
+              })
+              .catch(error => console.error('Error:', error));
+            } else {
+              form.querySelector('.quantity-input').value = 1; // 🔄 คืนค่าเป็น 1
+            }
+          } else {
+            // 🔄 ถ้ามีการเพิ่มหรือลดจำนวน
+            form.querySelector('.quantity-input').value = data.item_quantity;
+            refreshCartCount(); // 🔄 อัปเดตตัวเลขในตะกร้า
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      });
+    });
+  });
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const clearCartBtn = document.getElementById('clear-cart-btn');
+
+    // 📌 เมื่อกดปุ่มล้างตะกร้า
+    clearCartBtn.addEventListener('click', () => {
+      if (confirm("คุณแน่ใจใช่ไหมที่จะล้างสินค้าทั้งหมดในตะกร้า?")) {
+        fetch('/clear-cart/', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.message === 'Cart cleared') {
+            // 🔥 ลบรายการสินค้าทั้งหมดออกจากหน้า
+            document.querySelectorAll("[id^='cart-item-']").forEach(item => item.remove());
+            // 🔄 อัปเดตตัวเลขใน Badge
+            document.querySelector('.badge').textContent = 0;
+            // 🔄 แสดงข้อความว่าไม่มีสินค้า
+            const cartContainer = document.querySelector('.flex.flex-col.mb-6');
+            cartContainer.innerHTML = '<p>ไม่มีสินค้าภายในตะกร้า</p>';
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      }
+    });
+  });
+
+  document.getElementById('clear-cart').addEventListener('click', function(event) {
+    event.preventDefault();
+    fetch('/clear-cart/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.querySelector('.badge').textContent = '0';
+        document.querySelector('#cart-items').innerHTML = '';
+        document.querySelector('#empty-cart-message').style.display = 'block'; // ✅ แสดงข้อความไม่มีสินค้า
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+</script>

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +28,9 @@ SECRET_KEY = 'django-insecure-q6*uidi1^$l$lf4^i13!d918)o65u_-_p1c7aye$iuygbk%5l5
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+STRIPE_TEST_PUBLIC_KEY = 'your-public-key'
+STRIPE_TEST_SECRET_KEY = 'your-secret-key'
 
 
 # Application definition
@@ -71,7 +75,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'imsuk.wsgi.application'
-
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -130,7 +134,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-AUTH_USER_MODEL = 'food.Customer'
 
 TEMPLATES[0]['OPTIONS']['context_processors'] += [
     'food.context_processors.cart_context',

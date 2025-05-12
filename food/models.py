@@ -1,21 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 
 # -------------------
-# 1. User (Customer)
-# -------------------
-
-class Customer(AbstractUser):
-    phone = models.CharField(max_length=15)
-    allergens = models.ManyToManyField('Allergen', blank=True, related_name='customers')
-
-
-# -------------------
-# 2. Address
+# 1. Address
 # -------------------
 
 class Address(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='addresses')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
     name = models.CharField(max_length=100)
     house_number = models.CharField(max_length=100)
     sub_district = models.CharField(max_length=100)
@@ -26,7 +17,7 @@ class Address(models.Model):
 
 
 # -------------------
-# 3. Allergen
+# 2. Allergen
 # -------------------
 
 class Allergen(models.Model):
@@ -38,8 +29,9 @@ class Allergen(models.Model):
     class Meta:
         verbose_name_plural = "Allergens"
 
+
 # -------------------
-# 4. FoodCategory (ใหม่)
+# 3. FoodCategory
 # -------------------
 
 class FoodCategory(models.Model):
@@ -47,7 +39,7 @@ class FoodCategory(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     class Meta:
         verbose_name_plural = "FoodCategory"
 
@@ -79,7 +71,7 @@ class Restaurant(models.Model):
 
 class MenuItem(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menus')
-    category = models.ForeignKey(FoodCategory, on_delete=models.SET_NULL, null=True, blank=True) 
+    category = models.ForeignKey(FoodCategory, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255)
     price = models.PositiveIntegerField()
     discount_percent = models.PositiveIntegerField(default=0)
@@ -104,7 +96,7 @@ class MenuItem(models.Model):
 # -------------------
 
 class CartItem(models.Model):
-    user = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
@@ -120,7 +112,7 @@ class CartItem(models.Model):
 # -------------------
 
 class Order(models.Model):
-    user = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     total_price = models.FloatField()
     is_paid = models.BooleanField(default=False)

@@ -16,9 +16,23 @@ inputs.forEach((inp) => {
 
 toggle_btn.forEach((btn) => {
   btn.addEventListener("click", () => {
+    e.preventDefault();
     main.classList.toggle("sign-up-mode");
   });
 });
+
+toggle_btn.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    if (document.body.classList.contains("address-page")) {
+      main.classList.toggle("address-mode"); // ✅ slide ฟอร์มแบบ address
+    } else {
+      main.classList.toggle("sign-up-mode"); // ✅ ใช้ของ signin.html
+    }
+  });
+});
+
 
 function moveSlider() {
   let index = this.dataset.value;

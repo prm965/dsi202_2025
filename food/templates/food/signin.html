@@ -9,11 +9,18 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
   <body>
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
     <main>
       <div class="box">
         <div class="inner-box">
           <div class="forms-wrap">
-            <form action="{% url 'signin' %}" method="POST" class="sign-in-form">
+            <form action="{% url 'login' %}" method="POST" autocomplete="off" class="sign-in-form">
               {% csrf_token %}
               <div class="logo">
                 <img src="{% static 'images/logo.png' %}" alt="imSUK" />
@@ -22,46 +29,32 @@
 
               <div class="heading">
                 <h2>Welcome Back</h2>
-                <h6>Not registred yet?</h6>
+                <h6>Not registered yet?</h6>
                 <a href="#" class="toggle">Sign up</a>
               </div>
 
               <div class="actual-form">
                 <div class="input-wrap">
-                  <input
-                    type="text"
-                    minlength="4"
-                    class="input-field"
-                    autocomplete="off"
-                    required
-                  />
-                  <label>Name</label>
+                  <input type="email" name="email" class="input-field" autocomplete="off" required />
+                  <label>Email</label>
                 </div>
 
                 <div class="input-wrap">
-                  <input
-                    type="password"
-                    minlength="4"
-                    class="input-field"
-                    autocomplete="off"
-                    required
-                  />
+                  <input type="password" name="password" class="input-field" autocomplete="off" required />
                   <label>Password</label>
                 </div>
 
                 <input type="submit" value="Sign In" class="sign-btn" />
 
                 <p class="text">
-                  Forgotten your password or you login datails?
+                  Forgotten your password or your login details?
                   <a href="#">Get help</a> signing in
                 </p>
               </div>
             </form>
 
-            <form action="{% url 'register' %}" method="POST" class="sign-up-form">
-            {% csrf_token %}
-
-
+            <form action="{% url 'register' %}" method="POST" autocomplete="off" class="sign-up-form" autocomplete="off" id="signup-form">
+              {% csrf_token %}
               <div class="heading">
                 <h2>Get Started</h2>
                 <h6>Already have an account?</h6>
@@ -70,67 +63,32 @@
 
               <div class="actual-form">
                 <div class="input-wrap">
-                  <input
-                    type="text"
-                    minlength="4"
-                    class="input-field"
-                    autocomplete="off"
-                    required
-                  />
+                  <input type="text" name="first_name" class="input-field" autocomplete="off" required />
                   <label>ชื่อ</label>
                 </div>
 
                 <div class="input-wrap">
-                  <input
-                    type="text"
-                    minlength="4"
-                    class="input-field"
-                    autocomplete="off"
-                    required
-                  />
+                  <input type="text" name="last_name" class="input-field" autocomplete="off" required />
                   <label>นามสกุล</label>
                 </div>        
                 
                 <div class="input-wrap">
-                  <input
-                    type="text"
-                    minlength="4"
-                    class="input-field"
-                    autocomplete="off"
-                    required
-                  />
+                  <input type="text" name="phone" class="input-field" autocomplete="off" required />
                   <label>เบอร์โทรศัพท์</label>
                 </div>   
 
                 <div class="input-wrap">
-                  <input
-                    type="email"
-                    class="input-field"
-                    autocomplete="off"
-                    required
-                  />
+                  <input type="email" name="email" class="input-field" required />
                   <label>Email</label>
                 </div>
 
                 <div class="input-wrap">
-                  <input
-                    type="password"
-                    minlength="4"
-                    class="input-field"
-                    autocomplete="off"
-                    required
-                  />
+                  <input type="password" name="password" class="input-field" autocomplete="off" required />
                   <label>รหัสผ่าน</label>
                 </div>
 
                 <div class="input-wrap">
-                  <input
-                    type="password"
-                    minlength="4"
-                    class="input-field"
-                    autocomplete="off"
-                    required
-                  />
+                  <input type="password" name="confirm_password" class="input-field" autocomplete="off" required />
                   <label>ยืนยันรหัสผ่าน</label>
                 </div>
 
@@ -147,9 +105,9 @@
 
           <div class="carousel">
             <div class="images-wrapper">
-              <img src="./imges/image1.png" class="image img-1 show" alt="" />
-              <img src="./imges/image2.png" class="image img-2" alt="" />
-              <img src="./imges/image3.png" class="image img-3" alt="" />
+              <img src="{% static 'images/image1.png' %}" class="image img-1 show" alt="" />
+              <img src="{% static 'images/image2.png' %}" class="image img-2" alt="" />
+              <img src="{% static 'images/image3.png' %}" class="image img-3" alt="" />
             </div>
 
             <div class="text-slider">
@@ -160,7 +118,6 @@
                   <h2>Invite students to your class</h2>
                 </div>
               </div>
-
               <div class="bullets">
                 <span class="active" data-value="1"></span>
                 <span data-value="2"></span>
@@ -172,7 +129,21 @@
       </div>
     </main>
 
-    <!-- Javascript file -->
     <script src="{% static 'js/app.js' %}"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const signupForm = document.getElementById("signup-form");
+        if (signupForm) {
+          signupForm.addEventListener("submit", function (e) {
+            const password = signupForm.querySelector('input[name="password"]').value;
+            const confirmPassword = signupForm.querySelector('input[name="confirm_password"]').value;
+            if (password !== confirmPassword) {
+              e.preventDefault();
+              alert("รหัสผ่านไม่ตรงกัน กรุณาตรวจสอบอีกครั้ง");
+            }
+          });
+        }
+      });
+    </script>
   </body>
 </html>

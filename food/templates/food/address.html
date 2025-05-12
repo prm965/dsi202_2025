@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign in & Sign up Form</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+    <main>
+      <div class="box">
+        <div class="inner-box">
+          <div class="forms-wrap">
+            <form action="{% url 'home' %}" method="POST" class="sign-in-form" autocomplete="off">
+              {% csrf_token %}
+              <div class="heading">
+                <h2>ที่อยู่</h2>
+                <h6>ยังไม่ได้เพิ่มที่อยู่รึเปล่า?</h6>
+                <a href="#" class="toggle">เพิ่มที่อยู่</a>
+              </div>
+
+              {% for address in addresses %}
+              <div class="input-wrap">
+                <label>
+                  <input type="radio" name="selected_address" value="{{ address.id }}">
+                  {{ address.name }} - {{ address.province }}
+                </label>
+              </div>
+              {% empty %}
+              <p>คุณยังไม่มีที่อยู่</p>
+              {% endfor %}
+
+                <!-- ปุ่มเลือกที่อยู่ -->
+                {% if addresses %}
+                <input type="submit" value="เลือกที่อยู่" class="sign-btn" />
+                {% endif %}
+              </div>
+            </form>
+
+            <form action="{% url 'add_address' %}" method="POST" autocomplete="off" class="sign-up-form-2" id="signup-form">
+              {% csrf_token %}
+              <div class="heading">
+                <h2>ที่อยู่</h2>
+                <h6>เพิ่มที่อยู่ไว้แล้วรึเปล่า?</h6>
+                <a href="#" class="toggle">เลือกที่อยู่</a>
+              </div>
+
+              <div class="actual-form">
+                <div class="input-wrap">
+                  <input type="text" name="name" class="input-field" autocomplete="off" required />
+                  <label>ชื่อที่อยู่</label>
+                </div>
+                <div class="input-wrap">
+                  <input type="text" name="house_number" class="input-field" autocomplete="off" required />
+                  <label>บ้านเลขที่ / หมู่บ้าน / หมู่ที่</label>
+                </div>
+                <div class="input-wrap">
+                  <input list="sub_districts" name="sub_district" class="input-field" required>
+                  <label>แขวง/ตำบล</label>
+                  <datalist id="sub_districts"></datalist>
+                </div>
+                <div class="input-wrap">
+                  <input list="districts" name="district" class="input-field" required>
+                  <label>เขต/อำเภอ</label>
+                  <datalist id="districts"></datalist>
+                </div>
+                <div class="input-wrap">
+                  <input list="provinces" name="province" class="input-field" required>
+                  <label>จังหวัด</label>
+                  <datalist id="provinces"></datalist>
+                </div>
+                <div class="input-wrap">
+                  <input list="postal_codes" name="postal_code" class="input-field" required>
+                  <label>รหัสไปรษณีย์</label>
+                  <datalist id="postal_codes"></datalist>
+                </div>
+
+
+                <input type="submit" value="บันทึก" class="sign-btn" />
+              </div>
+            </form>
+          </div>
+
+          <div class="carousel">
+            <div class="images-wrapper">
+              <img src="{% static 'images/image1.png' %}" class="image img-1 show" alt="" />
+              <img src="{% static 'images/image2.png' %}" class="image img-2" alt="" />
+              <img src="{% static 'images/image3.png' %}" class="image img-3" alt="" />
+            </div>
+
+            <div class="text-slider">
+              <div class="text-wrap">
+                <div class="text-group">
+                  <h2>Create your own courses</h2>
+                  <h2>Customize as you like</h2>
+                  <h2>Invite students to your class</h2>
+                </div>
+              </div>
+              <div class="bullets">
+                <span class="active" data-value="1"></span>
+                <span data-value="2"></span>
+                <span data-value="3"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="{% static 'js/app.js' %}"></script>
+  </body>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const signupForm = document.getElementById("signup-form");
+
+    if (signupForm) {
+      signupForm.addEventListener("submit", function (e) {
+        const password = signupForm.querySelector('input[type="password"]:nth-of-type(1)').value;
+        const confirmPassword = signupForm.querySelector('input[type="password"]:nth-of-type(2)').value;
+
+        if (password !== confirmPassword) {
+          e.preventDefault();
+          alert("รหัสผ่านไม่ตรงกัน กรุณาตรวจสอบอีกครั้ง");
+        }
+      });
+    }
+  });
+
+      // รายการข้อมูลตัวอย่าง
+      const provinces = ["กรุงเทพมหานคร", "เชียงใหม่", "ขอนแก่น", "ภูเก็ต"];
+      const districts = ["เมือง", "หางดง", "บางกะปิ", "คลองสาน"];
+      const subDistricts = ["บางเขน", "สันผีเสื้อ", "ในเมือง", "รัษฎา"];
+      const postalCodes = ["10220", "50210", "40000", "83000"];
+
+      const populateDatalist = (id, items) => {
+        const datalist = document.getElementById(id);
+        items.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item;
+          datalist.appendChild(option);
+        });
+      };
+
+      document.addEventListener('DOMContentLoaded', function () {
+        populateDatalist('provinces', provinces);
+        populateDatalist('districts', districts);
+        populateDatalist('sub_districts', subDistricts);
+        populateDatalist('postal_codes', postalCodes);
+      });  
+
+</script>
+
+</html>

@@ -117,7 +117,7 @@
       <div class="space-y-5">
         <img src="{% static 'images/imsuk-logo.svg' %}" alt="imsuk logo">
         <nav class="space-y-2 text-m">
-          <a href="home.html" class="menu-item" id="home-link">
+          <a href="{% url 'home' %}" class="menu-item" id="home-link">
             <i class="fi fi-sr-home"></i>
             <span>หน้าแรก</span>
           </a>
@@ -148,7 +148,7 @@
 
     <!-- 🔹 Sidebar Right -->
     {% include 'food/sidebar.html' %} <!-- เพิ่ม sidebar ที่นี่ -->
-    </aside>
+
 
   </div>
 

@@ -1,0 +1,85 @@
+{% extends 'food/base.html' %}
+
+{% block content %}
+<div class="flex h-screen">
+
+    <!-- Main Content (Middle) -->
+    <div class="flex-1 p-6 space-y-6 bg-[#f9f6fb]">
+
+        <!-- Header -->
+        <h1 class="text-2xl font-bold text-[#3e8340]">การชำระเงิน</h1>
+        <p>กรุณาตรวจสอบรายการสินค้าด้านล่างและเลือกวิธีการชำระเงิน</p>
+
+        <!-- Order Summary Table -->
+        <div class="overflow-x-auto bg-white shadow-md rounded-lg p-4">
+            <table class="table-auto w-full border">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="px-4 py-2 text-black border">ชื่อสินค้า</th>
+                        <th class="px-4 py-2 text-black border">จำนวน</th>
+                        <th class="px-4 py-2 text-black border">ราคา</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item_id, item in cart_items.items %}
+                    <tr class="bg-white">
+                        <td class="px-4 py-2 text-black border">{{ item.name }}</td>
+                        <td class="px-4 py-2 text-black border">{{ item.quantity }}</td>
+                        <td class="px-4 py-2 text-black border">฿{{ item.price|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Total Price -->
+        <div class="my-4">
+            <h3 class="text-lg font-semibold">ยอดรวม: ฿{{ total_price|floatformat:2 }}</h3>
+        </div>
+
+        <!-- QR Code for Payment -->
+        <div class="my-4">
+            <h4 class="text-lg">QR Code สำหรับการชำระเงิน</h4>
+            <!-- แสดง QR Code ที่สร้างจาก PromptPay.io -->
+            <img src="{{ qr_code_url }}" alt="QR Code" class="max-w-full h-auto" />
+        </div>
+
+        <!-- Upload Payment Slip -->
+        <div class="my-4">
+            <h4 class="text-lg">อัปโหลดสลิปการชำระเงิน</h4>
+            <input type="file" name="payment_slip" class="border p-2 rounded-md w-full" />
+        </div>
+
+        <!-- Confirm Payment Button -->
+        <div class="my-4">
+            <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-lg text-lg font-medium hover:bg-blue-700 transition" onclick="showPopup()">ยืนยันการชำระเงิน</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Popup for Thank You -->
+<div id="thankYouPopup" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded-lg w-1/3">
+        <h2 class="text-2xl font-bold text-green-600">ขอบคุณสำหรับการสั่งซื้อ!</h2>
+        <p>กรุณาให้คะแนนบริการของเรา</p>
+        <div class="my-4">
+            <label for="rating" class="block text-sm">คะแนน:</label>
+            <input type="number" id="rating" min="1" max="5" class="border p-2 rounded-md w-full" />
+        </div>
+        <button class="bg-green-600 text-white px-4 py-2 rounded-md" onclick="closePopup()">ยืนยัน</button>
+    </div>
+</div>
+
+<script>
+    function showPopup() {
+        document.getElementById('thankYouPopup').classList.remove('hidden');
+    }
+
+    function closePopup() {
+        document.getElementById('thankYouPopup').classList.add('hidden');
+        // Optionally, handle the review submission here
+    }
+</script>
+
+{% endblock %}

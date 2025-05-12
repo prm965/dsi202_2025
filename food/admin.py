@@ -3,8 +3,7 @@ from .models import Restaurant, MenuItem, Allergen, CartItem, Order, OrderItem, 
 import re
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
-
-admin.site.register(User)
+from django.contrib.auth.admin import UserAdmin
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
@@ -41,8 +40,11 @@ class FoodCategoryAdmin(admin.ModelAdmin):
     list_display = ['name']  # จะแสดงชื่อประเภทอาหารใน Admin
     search_fields = ['name'] 
     
+
 # Register other models
 admin.site.register(Allergen)
 admin.site.register(CartItem)
 admin.site.register(Order)
 admin.site.register(OrderItem)
+admin.site.unregister(User)  # ต้อง unregister ก่อน ถ้าจะแก้ไขรูปแบบ
+admin.site.register(User, UserAdmin)

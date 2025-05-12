@@ -343,6 +343,7 @@ main.sign-up-mode .carousel {
   border-radius: 1rem;
 }
 
+
 @media (max-width: 850px) {
   .box {
     height: auto;
@@ -378,6 +379,7 @@ main.sign-up-mode .carousel {
     transform: translateX(100%);
   }
 
+
   main.sign-up-mode form.sign-in-form {
     transform: translateX(-100%);
   }
@@ -385,7 +387,7 @@ main.sign-up-mode .carousel {
   main.sign-up-mode form.sign-up-form {
     transform: translateX(0%);
   }
-
+  
   .carousel {
     position: revert;
     height: auto;
@@ -432,4 +434,13 @@ main.sign-up-mode .carousel {
   form {
     padding: 1rem 2rem 1.5rem;
   }
+}
+
+/* ฟอร์มขยับแบบ slide ในหน้า address */
+form.sign-up-form-2 {
+  transform: translateX(100%);
+}
+
+main.address-mode form.sign-up-form {
+  transform: translateX(0%);
 }

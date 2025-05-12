@@ -1,11 +1,96 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Restaurant, MenuItem, FoodCategory, CartItem
+from .models import Restaurant, MenuItem, FoodCategory, CartItem, Address, Order
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
+import qrcode
 
+def signin(request):
+    return render(request, 'food/signin.html')
+
+@login_required
+def address_list(request):
+    addresses = Address.objects.filter(user=request.user)
+    return render(request, 'food/address.html', {
+        'addresses': addresses,
+    })
+
+@login_required
+def add_address(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        house_number = request.POST.get('house_number')
+        sub_district = request.POST.get('sub_district')
+        district = request.POST.get('district')
+        province = request.POST.get('province')
+        postal_code = request.POST.get('postal_code')
+
+        Address.objects.create(
+            user=request.user,
+            name=name,
+            house_number=house_number,
+            sub_district=sub_district,
+            district=district,
+            province=province,
+            postal_code=postal_code,
+        )
+        return redirect('address')
+
+@csrf_exempt
+def register_user(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if password != confirm_password:
+            messages.error(request, "รหัสผ่านไม่ตรงกัน")
+            return redirect('signin')
+
+        if User.objects.filter(username=email).exists():
+            messages.error(request, "มีผู้ใช้งานนี้ในระบบแล้ว")
+            return redirect('signin')
+
+        if not first_name or not last_name:
+            messages.error(request, "กรุณากรอกชื่อและนามสกุล")
+            return redirect('signin')
+
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name
+        )
+        user.save()
+        messages.success(request, "สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ")
+        return redirect('signin')
+
+    return redirect('signin')
+
+
+@csrf_exempt
+def login_user(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=email, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, "อีเมลหรือรหัสผ่านไม่ถูกต้อง")
+            return redirect('signin')
+
+    return redirect('signin')
 
 def service_details(request):
     return render(request, 'service-details.html')
@@ -43,6 +128,31 @@ def index(request):
         "cart_count": request.session.get('cart_count', 0)
     })
 
+@login_required
+def pay(request):
+    # ดึงข้อมูลสินค้าจากตะกร้า
+    cart = request.session.get('cart', {})
+    
+    # คำนวณยอดรวม
+    total_price = 0
+    for item in cart.values():
+        total_price += item['price'] * item['quantity']
+    
+    # หมายเลขโทรศัพท์ของคุณที่เชื่อมกับ PromptPay
+    phone_number = "0922157806"  # หมายเลขพร้อมเพย์ที่คุณใช้งาน
+    
+    # สร้าง URL สำหรับการใช้ใน promptpay.io
+    payment_url = f"https://promptpay.io/{phone_number}/{total_price:.2f}"
+
+    return render(request, 'food/pay.html', {
+        'total_price': total_price,
+        'qr_code_url': payment_url,  # ส่ง URL สำหรับ QR Code ไปยังเทมเพลต
+        'cart_items': cart  # ส่งข้อมูลสินค้าที่อยู่ในตะกร้าไปยังเทมเพลต
+    })
+
+
+
+@login_required
 def home(request):
     query = request.GET.get("q", "")
     category_name = request.GET.get('category')
@@ -62,26 +172,27 @@ def home(request):
     request.session['cart_count'] = sum(item['quantity'] for item in request.session['cart'].values())
     request.session.modified = True
 
+    # ถ้ามีการส่ง POST มาจากฟอร์มที่เลือกที่อยู่
+    if request.method == 'POST':
+        selected_address_id = request.POST.get('selected_address')
+        if selected_address_id:
+            selected_address = Address.objects.get(id=selected_address_id)
+            request.session['selected_address'] = selected_address.id  # เก็บที่อยู่ใน session
+
+    # ดึงที่อยู่ที่เลือกจาก session
+    selected_address_id = request.session.get('selected_address')
+    if selected_address_id:
+        selected_address = Address.objects.get(id=selected_address_id)
+    else:
+        selected_address = None
+
     return render(request, "food/home.html", {
         "menu_items": menu_items,
         "restaurants": Restaurant.objects.all(),
         "cart": request.session.get('cart', {}),
-        "cart_count": request.session.get('cart_count', 0)
+        "cart_count": request.session.get('cart_count', 0),
+        "selected_address": selected_address,  # ส่งที่อยู่ที่เลือก
     })
-
-def signin(request):
-    if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-        else:
-            messages.error(request, "Username or password is incorrect.")
-    
-    return render(request, 'food/signin.html')
 
 
 def get_cart_count(request):

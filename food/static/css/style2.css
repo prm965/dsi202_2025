@@ -1,0 +1,36 @@
+/* ให้กริดสามารถเลื่อนในแนวนอนได้ */
+.grid {
+    display: flex;
+    overflow-x: auto;  /* เปิดใช้งานการเลื่อนในแนวนอน */
+    padding-bottom: 20px; /* เพิ่มพื้นที่สำหรับ scrollbar */
+}
+
+/* เพิ่มไอคอนเลื่อน */
+.text-2xl {
+    font-size: 1.5rem;  /* ขนาดไอคอน */
+    cursor: pointer;  /* ทำให้ไอคอนสามารถคลิกได้ */
+}
+
+.cursor-pointer:hover {
+    color: #3e8340;  /* เปลี่ยนสีเมื่อ hover */
+}
+
+/* การจัดการ Scrollbar */
+.grid::-webkit-scrollbar {
+    height: 6px;  /* ขนาด scrollbar */
+}
+
+.grid::-webkit-scrollbar-thumb {
+    background-color: #ddd;  /* สีของ scrollbar */
+    border-radius: 10px;  /* ทำมุมมน */
+}
+
+.grid::-webkit-scrollbar-track {
+    background: transparent;  /* พื้นหลังของ scrollbar */
+}
+
+/* เพิ่มระยะห่างจาก Sidebar ฝั่งซ้าย โดยการดันเนื้อหากลางออก */
+.main-content {
+  margin-left: 43vw; 
+  background-color: #f9f6fb; 
+}

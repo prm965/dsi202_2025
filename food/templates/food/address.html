@@ -30,10 +30,8 @@
 
               {% for address in addresses %}
               <div class="input-wrap">
-                <label>
-                  <input type="radio" name="selected_address" value="{{ address.id }}">
+                  <input type="radio" id="address1" name="selected_address" value="{{ address.id }}">
                   {{ address.name }} - {{ address.province }}
-                </label>
               </div>
               {% empty %}
               <p>คุณยังไม่มีที่อยู่</p>

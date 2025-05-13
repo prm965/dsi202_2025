@@ -1,3 +1,35 @@
+/* ให้กริดสามารถเลื่อนในแนวนอนได้ */
+.grid {
+    display: flex;
+    overflow-x: auto;  /* เปิดใช้งานการเลื่อนในแนวนอน */
+    padding-bottom: 20px; /* เพิ่มพื้นที่สำหรับ scrollbar */
+}
+
+/* เพิ่มไอคอนเลื่อน */
+.text-2xl {
+    font-size: 1.5rem;  /* ขนาดไอคอน */
+    cursor: pointer;  /* ทำให้ไอคอนสามารถคลิกได้ */
+}
+
+.cursor-pointer:hover {
+    color: #3e8340;  /* เปลี่ยนสีเมื่อ hover */
+}
+
+/* การจัดการ Scrollbar */
+.grid::-webkit-scrollbar {
+    height: 6px;  /* ขนาด scrollbar */
+}
+
+.grid::-webkit-scrollbar-thumb {
+    background-color: #ddd;  /* สีของ scrollbar */
+    border-radius: 10px;  /* ทำมุมมน */
+}
+
+.grid::-webkit-scrollbar-track {
+    background: transparent;  /* พื้นหลังของ scrollbar */
+}
+
+
 /* กำหนดการจัดรูปภาพให้อยู่ตรงกลางกล่องในแนวนอน */
 .flex-shrink-0 {
   display: flex;
@@ -59,7 +91,7 @@ main {
   width: 100%;
   min-height: 100vh;
   overflow: hidden;
-  background-color: #ff8c6b;
+  background-color: #ffeef4;
   padding: 2rem;
   display: flex;
   align-items: center;
@@ -161,7 +193,9 @@ form.sign-up-form {
   position: relative;
   height: 37px;
   margin-bottom: 2rem;
+  z-index: 1; /* เพิ่ม z-index */
 }
+
 
 .input-field {
   position: absolute;
@@ -179,14 +213,22 @@ form.sign-up-form {
 
 label {
   position: absolute;
-  left: 0;
+  left: 10px; /* เพิ่มตำแหน่งซ้าย */
   top: 50%;
   transform: translateY(-50%);
   font-size: 0.95rem;
   color: #bbb;
-  pointer-events: none;
+  pointer-events: auto;
   transition: 0.4s;
+  z-index: 2;
 }
+
+
+input[type="radio"] {
+  pointer-events: auto;  /* ให้สามารถคลิกได้ */
+  cursor: pointer;       /* เปลี่ยนเคอร์เซอร์เมื่อวางเมาส์เหนือปุ่ม */
+}
+
 
 .input-field.active {
   border-bottom-color: #151111;

@@ -40,6 +40,7 @@
         border-bottom-right-radius: 30px;
         transition: width 0.3s ease;
         width: 80px; /* เมื่อหด Sidebar */
+        background-color: #f9f6fb;  /* เพิ่มสีพื้นหลัง */
       }
 
       /* ✅ สไตล์สำหรับการย่อและขยาย Sidebar */
@@ -91,23 +92,18 @@
         gap: 4px; /* ระยะห่างระหว่างหัวข้อ */
       }
 
-      /* ✅ ทำให้ "ออกจากระบบ" อยู่ด้านล่างสุด */
       .logout {
-        margin-top: auto; /* ให้ "ออกจากระบบ" อยู่ที่ด้านล่างสุด */
+        margin-top: auto;
         display: flex;
-        justify-content: flex-start; /* จัดตำแหน่งชิดซ้าย */
         align-items: center;
         gap: 10px;
-        padding: 10px 0;
-      }
-
-      .logout i {
-        font-size: 24px;
+        padding: 10px;
       }
 
     </style>
+    <link rel="stylesheet" href="{% static 'css/style2.css' %}" />
 </head>
-<body class="bg-[#ffffff] text-gray-800 m-0 p-0 overflow-hidden">
+<body class="bg-[#f9f6fb] text-gray-800 m-0 p-0 overflow-hidden">
 
   <!-- ✅ Layout: Fullscreen Grid -->
   <div class="w-screen h-screen flex overflow-hidden">
@@ -125,7 +121,7 @@
             <i class="fi fi-sr-gift"></i>
             <span>โปรโมชั่น</span>
           </a>
-          <a href="pay.html" class="menu-item" id="pay-link">
+          <a href="{% url 'pay' %}" class="menu-item" id="pay-link">
             <i class="fi fi-sr-credit-card"></i>
             <span>การชำระเงิน</span>
           </a>
@@ -137,8 +133,13 @@
             <i class="fi fi-sr-user"></i>
             <span>โปรไฟล์ผู้ใช้</span>
           </a>
+          <!-- ปุ่มออกจากระบบที่ด้านล่างสุด -->
+          <div class="logout">
+            <a href="{% url 'home' %}" class="menu-item">
+            <i class="fi fi-sr-exit"></i>
+          </a>
         </nav>
-      </div>
+        </div>
     </aside>
 
     <!-- 🔸 Main Content (Scrollable Center) -->

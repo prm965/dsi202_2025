@@ -3,17 +3,17 @@
 
 {% block content %}
 <div class="flex h-screen">
+ <head> <link rel="stylesheet" href="{% static 'css/style2.css' %}" /> </head>  
 
     <!-- Main Content (Middle) -->
-    <div class="flex-1 p-6 space-y-6 bg-[#f9f6fb]">
+    <div class="flex-1 p-6 space-y-6 bg-[#f9f6fb] main-content">
 
       <!-- Greeting and Address -->
 <div class="flex justify-between items-center">
   <div>
     <h1 class="text-2xl font-bold text-[#3e8340]">สวัสดีคุณ {{ request.user.first_name|default:request.user.username }}</h1>
     <a href="{% url 'address' %}" class="text-sm text-blue-500 underline">
-    📍 {{ selected_address.name|default:"ยังไม่มีที่อยู่" }}
-</a>
+    📍 {{ selected_address.name|default:"ยังไม่มีที่อยู่" }} </a>
 
 
   </div>
@@ -52,7 +52,8 @@
 <!-- Menu Cards -->
 <div>
   <h2 class="text-xl font-bold text-[#3e8340] mb-3">กล่องสุ่มสำหรับคุณ</h2>
-  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+  <div class="flex justify-between items-center gap-4 overflow-x-auto">
+    <div class="flex gap-5 whitespace-nowrap">
     {% for item in menu_items %}
     <div class="bg-[#fff0f5] rounded-2xl shadow p-4 w-[280px] text-sm mx-auto">
       <!-- รูปภาพ -->
@@ -124,7 +125,6 @@
         </div>
             
         {% endfor %}
-
   </div>
 
 </div>
@@ -142,12 +142,6 @@
     });
   });
 </script>
-
-
-    <!-- Banner Upload Placeholder -->
-    <div class="bg-white rounded-xl p-4 shadow text-center text-gray-500 border-dashed border-2 border-gray-300">
-      📸 พื้นที่สำหรับป้ายแบนเนอร์ (แอดมินอัปโหลดได้)
-    </div>
 
     <!-- ร้านอาหารแนะนำ -->
 <div>
@@ -185,9 +179,9 @@
   </div>
 </div>
 
-    <!-- Donate Section -->
-    <div class="text-center text-sm text-gray-400">
-      🙏 พื้นที่สำหรับแสดงระบบบริจาค (future section)
+    <!-- Banner Upload Placeholder -->
+    <div class="bg-white rounded-xl p-4 shadow text-center text-gray-500 border-dashed border-2 border-gray-300">
+    <img src="{% static 'images/banner-1.png' %}" class="image img-1 show rounded-xl shadow" alt="" />
     </div>
 
   </div>

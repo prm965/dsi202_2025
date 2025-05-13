@@ -32,7 +32,6 @@ ALLOWED_HOSTS = []
 STRIPE_TEST_PUBLIC_KEY = 'your-public-key'
 STRIPE_TEST_SECRET_KEY = 'your-secret-key'
 
-
 # Application definition
 
 INSTALLED_APPS = [

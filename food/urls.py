@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('pay/', views.pay, name='pay'),
+    path('clear-cart/', views.clear_cart, name='clear_cart'),  # ตรวจสอบว่า URL นี้มีอยู่
     path('signin/', views.signin, name='signin'),
     path('login/', views.login_user, name='login'),
     path('register/', views.register_user, name='register'),

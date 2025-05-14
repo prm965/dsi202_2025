@@ -12,12 +12,11 @@
 <div class="flex justify-between items-center">
   <div>
     <h1 class="text-2xl font-bold text-[#3e8340]">สวัสดีคุณ {{ request.user.first_name|default:request.user.username }}</h1>
-    <a href="{% url 'address' %}" class="text-sm text-blue-500 underline">
-    📍 {{ selected_address.name|default:"ยังไม่มีที่อยู่" }} </a>
+    <a href="{% url 'address' %}" class="text-sm text-blue-500 underline">📍 {{ selected_address.name|default:"ยังไม่มีที่อยู่" }} </a>
   </div>
 
-
-  <div class="w-1/3 flex items-center border rounded-full px-4 py-2 bg-white">
+  <form method="GET" action="" class="w-1/2 flex items-center border rounded-lg px-1  bg-white">
+    <div class=" w-1 flex items-center rounded-lg px-4 py-2">
     <button type="submit" class="text-gray-500 mr-2 flex items-center justify-center">
         <i class="fi fi-sr-search text-lg"></i>
     </button>
@@ -25,23 +24,23 @@
     <input type="text" name="q" value="{{ request.GET.q }}" placeholder="ค้นหาอาหาร / ร้านอาหาร"
            class="flex-1 text-sm ml-4 focus:outline-none border-none placeholder-gray-400 h-full" />
     
-    <button type="button" class="ml-4 text-gray-500 flex items-center justify-center rounded-full p-2 bg-gray-100">
+    <button type="button" class="ml-40 text-gray-500 flex items-center justify-center rounded-lg p-2 bg-gray-100 ">
         <i class="fi fi-sr-filter text-lg"></i>
     </button>
+    
+  </div>
 </div>
-
-
-</div>
+</form>
 
       <!-- Category Filters -->
       <div class="flex gap-4 text-sm">
-        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-hamburger"></i>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow"><i class="fi fi-sr-hamburger"></i>
           <a href="?category=อาหารคาว" class="text-gray-700">อาหารคาว</a>
         </div>
-        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-cupcake"></i>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow"><i class="fi fi-sr-cupcake"></i>
           <a href="?category=ขนมหวาน" class="text-gray-700">ขนมหวาน</a>
         </div>
-        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow"><i class="fi fi-sr-shopping-bag"></i>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow"><i class="fi fi-sr-shopping-bag"></i>
           <a href="?category=ของชำ" class="text-gray-700">ของชำ</a>
         </div>
       </div>
@@ -49,7 +48,7 @@
 
     <!-- Promotion Banner -->
     <div class="bg-[#ffeef4] text-[#efaca4] p-4 rounded-2xl shadow text-center font-medium">
-      🎁 รับ <strong>ฟรีป๊อปคอร์น + เครื่องดื่ม</strong> เมื่อสั่งครบ 300 บาท
+      🎁 ของขวัญพิเศษสำหรับผู้ใช้ใหม่ รับ<strong>ส่วนลดสูงสุด 300 บาท</strong> 
     </div>
 
 <!-- Menu Cards -->
@@ -100,7 +99,7 @@
       <!-- Allergens -->
       <div class="text-xs text-gray-500 mb-2 space-x-1">
         {% for allergen in item.allergens.all %}
-          <span class="inline-block bg-red-100 text-red-600 px-2 py-0.5 rounded">{{ allergen.name }}</span>
+          <span class="inline-block bg-red-100 text-red-600 px-2 py-0.5 rounded-lg">{{ allergen.name }}</span>
         {% endfor %}
       </div>
     
@@ -110,7 +109,7 @@
       {% csrf_token %}
             <!-- ปุ่มจำนวน -->
             <div class="flex items-center gap-2">
-              <div class="flex items-center bg-white border border-gray-400 rounded-full px-2 py-1">
+              <div class="flex items-center bg-white border border-gray-400 rounded-lg px-2 py-1">
                 <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="decrease">−</button>
                 <input type="number" name="quantity" value="1" min="1"
                        class="quantity-input w-10 h-6 text-center border-none outline-none font-semibold text-base text-gray-800 leading-none" />

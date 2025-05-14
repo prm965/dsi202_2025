@@ -80,6 +80,68 @@
         document.getElementById('thankYouPopup').classList.add('hidden');
         // Optionally, handle the review submission here
     }
+
+    function showPopup() {
+        document.getElementById('thankYouPopup').classList.remove('hidden');
+    }
+
+    function submitReview() {
+        const rating = document.getElementById('rating').value;
+
+        // Make sure rating is between 1 and 5
+        if (rating >= 1 && rating <= 5) {
+            // Call function to clear cart after review submission
+            clearCart();
+
+            // Close the popup
+            closePopup();
+        } else {
+            alert("กรุณาให้คะแนนระหว่าง 1 ถึง 5");
+        }
+    }
+
+    function closePopup() {
+        // ส่งคำขอลบรายการในตะกร้า
+        fetch('/clear-cart/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Cart cleared') {
+                // อัปเดต UI หรือรีเฟรชหน้าเว็บหลังจากล้างตะกร้า
+                document.querySelectorAll("[id^='cart-item-']").forEach(item => item.remove());
+                document.querySelector('.badge').textContent = 0;
+                window.location.href = "{% url 'home' %}";  // ส่งผู้ใช้ไปยังหน้า home
+            } else {
+                alert("มีข้อผิดพลาดในการล้างตะกร้า");
+            }
+        })
+        .catch(error => console.error('Error:', error));
+
+        // ปิด Popup หลังจากการยืนยัน
+        document.getElementById('thankYouPopup').classList.add('hidden');
+    }    
+
+    function clearCart() {
+        fetch('/clear-cart/', {  // Use the correct URL '/clear-cart/'
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,  // Include CSRF token
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({})  // Optional: Send empty JSON body if not required
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Cart cleared:", data.message);
+            // Optionally, update UI to reflect empty cart
+            window.location.href = '/home/';  // Redirect to home after clearing the cart
+        })
+        .catch(error => console.error('Error:', error));
+    }    
 </script>
 
 {% endblock %}

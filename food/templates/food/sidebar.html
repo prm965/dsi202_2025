@@ -1,10 +1,16 @@
-<aside class="bg-[#f7efda] w-[320px] p-6 shrink-0 h-full border-l border-gray-200">
+{% load static %}
+<head> <link rel="stylesheet" href="{% static 'css/style2.css' %}" /> </head>  
+
+  <aside class="bg-[#f7efda] w-[320px] p-6 shrink-0 h-full border-l border-gray-200">
   <!-- ข้อมูลผู้ใช้ -->
-  <div class="flex flex-col items-center mb-6">
-    <img src="https://via.placeholder.com/80" alt="User Profile" class="rounded-full w-20 h-20 mb-3">
-    <h4 class="font-medium text-lg mb-2">{{ request.user.first_name }}</h4>
-    <p class="text-sm text-gray-500">ลูกค้า VIP</p>
+  <div class="flex items-center mb-6">
+    <img src="{% static 'images/001.svg' %}" class="shadow-lg rounded-full w-16 h-16 mr-4" alt="Profile Image" />
+    <div>
+      <h4 class="font-medium text-lg mb-1">{{ request.user.first_name }}</h4>
+      <h4 class="font-medium text-lg">{{ request.user.last_name }}</h4>
+    </div>
   </div>
+
 
   <!-- สรุปรายการสินค้าในตะกร้า -->
   <div class="flex flex-col mb-6">

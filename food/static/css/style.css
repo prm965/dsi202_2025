@@ -12,7 +12,7 @@
 }
 
 .cursor-pointer:hover {
-    color: #3e8340;  /* เปลี่ยนสีเมื่อ hover */
+    color: #ddec9b;  /* เปลี่ยนสีเมื่อ hover */
 }
 
 /* การจัดการ Scrollbar */
@@ -186,7 +186,7 @@ form.sign-up-form {
 }
 
 .toggle:hover {
-  color: #8371fd;
+  color: #efa4af;
 }
 
 .input-wrap {
@@ -254,7 +254,7 @@ input[type="radio"] {
 }
 
 .sign-btn:hover {
-  background-color: #8371fd;
+  background-color: #efa4af;
 }
 
 .text {
@@ -268,7 +268,7 @@ input[type="radio"] {
 }
 
 .text a:hover {
-  color: #8371fd;
+  color: #efa4af;
 }
 
 main.sign-up-mode form.sign-in-form {
@@ -295,7 +295,7 @@ main.sign-up-mode .carousel {
   width: 55%;
   left: 45%;
   top: 0;
-  background-color: #ffe0d2;
+  background-color: #ddec9b;
   border-radius: 2rem;
   display: grid;
   grid-template-rows: auto 1fr;

@@ -22,15 +22,11 @@
           <div class="forms-wrap">
             <form action="{% url 'login' %}" method="POST" autocomplete="off" class="sign-in-form">
               {% csrf_token %}
-              <div class="logo">
-                <img src="{% static 'images/logo.png' %}" alt="imSUK" />
-                <h4>IMSUK</h4>
-              </div>
 
               <div class="heading">
-                <h2>Welcome Back</h2>
-                <h6>Not registered yet?</h6>
-                <a href="#" class="toggle">Sign up</a>
+                <h2>ยินดีต้อนรับ</h2>
+                <h6>ยังไม่มีบัญชีรึเปล่า?</h6>
+                <a href="#" class="toggle">สมัครสมาชิก</a>
               </div>
 
               <div class="actual-form">
@@ -44,11 +40,11 @@
                   <label>Password</label>
                 </div>
 
-                <input type="submit" value="Sign In" class="sign-btn" />
+                <input type="submit" value="ลงชื่อเข้าใช้" class="sign-btn" />
 
                 <p class="text">
-                  Forgotten your password or your login details?
-                  <a href="#">Get help</a> signing in
+                  มีปัญหาการเข้าสู่ระบบรึเปล่า <br>
+                  <a href="#">ลืมรหัสผ่าน</a> หรือ <a href="#">ลืมอีเมล</a> 
                 </p>
               </div>
             </form>
@@ -56,9 +52,9 @@
             <form action="{% url 'register' %}" method="POST" autocomplete="off" class="sign-up-form" autocomplete="off" id="signup-form">
               {% csrf_token %}
               <div class="heading">
-                <h2>Get Started</h2>
-                <h6>Already have an account?</h6>
-                <a href="#" class="toggle">Sign in</a>
+                <h2>สมัครสมาชิก</h2>
+                <h6>มีบัญชีอยู่แล้วรึเปล่า?</h6>
+                <a href="#" class="toggle">ลงชื่อเข้าใช้</a>
               </div>
 
               <div class="actual-form">
@@ -92,13 +88,13 @@
                   <label>ยืนยันรหัสผ่าน</label>
                 </div>
 
-                <input type="submit" value="Sign Up" class="sign-btn" />
-
                 <p class="text">
-                  By signing up, I agree to the
-                  <a href="#">Terms of Services</a> and
-                  <a href="#">Privacy Policy</a>
+                  ฉันได้อ่าน
+                  <a href="#">ข้อตกลงการเข้าใช้งาน</a> <br> และได้ยินยอมเรียบร้อยแล้ว
                 </p>
+
+                <input type="submit" value="สมัครสมาชิก" class="sign-btn" />
+
               </div>
             </form>
           </div>
@@ -113,9 +109,9 @@
             <div class="text-slider">
               <div class="text-wrap">
                 <div class="text-group">
-                  <h2>Create your own courses</h2>
-                  <h2>Customize as you like</h2>
-                  <h2>Invite students to your class</h2>
+                  <h2>มาร่วมเป็นส่วนหนึ่งในการลดอาหารขยะ</h2>
+                  <h2>ลองชิมอาหารสุดพิเศษในราคาพิเศษ</h2>
+                  <h2>เพียงแค่คุณทาน ก็ช่วยโลกได้แล้ว</h2>
                 </div>
               </div>
               <div class="bullets">

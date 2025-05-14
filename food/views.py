@@ -18,6 +18,17 @@ def address_list(request):
         'addresses': addresses,
     })
 
+# ฟังก์ชันล้างตะกร้าและส่งกลับไปยังหน้า home
+def clear_cart(request):
+    if request.method == "POST":
+        # ลบข้อมูลใน session['cart']
+        request.session['cart'] = {}
+
+        # ส่งผู้ใช้กลับไปยังหน้า home
+        return JsonResponse({'message': 'Cart cleared', 'redirect_url': '/home/'}, status=200)
+
+    return JsonResponse({'message': 'Invalid request'}, status=400)
+
 @login_required
 def add_address(request):
     if request.method == 'POST':

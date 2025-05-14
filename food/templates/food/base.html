@@ -92,14 +92,6 @@
         gap: 4px; /* ระยะห่างระหว่างหัวข้อ */
       }
 
-      .logout {
-        margin-top: auto;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px;
-      }
-
     </style>
     <link rel="stylesheet" href="{% static 'css/style2.css' %}" />
 </head>
@@ -133,10 +125,13 @@
             <i class="fi fi-sr-user"></i>
             <span>โปรไฟล์ผู้ใช้</span>
           </a>
-          <!-- ปุ่มออกจากระบบที่ด้านล่างสุด -->
-          <div class="logout">
-            <a href="{% url 'home' %}" class="menu-item">
+          <a href="profile.html" class="menu-item" id="feedback">
+            <i class="fi fi-sr-feedback"></i>
+            <span>บอร์ดรีวิว</span>
+          </a>
+          <a href="{% url 'home' %}" class="menu-item">
             <i class="fi fi-sr-exit"></i>
+            <span>ออกจากระบบ</span>
           </a>
         </nav>
         </div>

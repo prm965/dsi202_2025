@@ -109,7 +109,7 @@
       </div>
     
       <!-- ฟอร์มเพิ่มสินค้า -->
-      <form method="POST" action="{% url 'add_to_cart' item.id %}" class="flex justify-between items-center">
+      <form method="POST" action="{% url 'add_to_cart' item.id %}" class="flex justify-between items-center login-check" data-require-login="true">
 
       {% csrf_token %}
             <!-- ปุ่มจำนวน -->
@@ -198,3 +198,21 @@
 
   </div>
   {% endblock %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const isAuthenticated = document.body.dataset.authenticated === "true";
+
+  document.querySelectorAll('.login-check').forEach(link => {
+    link.addEventListener('click', function (e) {
+      if (!isAuthenticated && link.dataset.requireLogin === "true") {
+        e.preventDefault();
+        const confirmed = confirm("คุณต้องเข้าสู่ระบบก่อนใช้งานฟีเจอร์นี้ ต้องการเข้าสู่ระบบตอนนี้หรือไม่?");
+        if (confirmed) {
+          window.location.href = "/signin/";
+        }
+      }
+    });
+  });
+});
+</script>

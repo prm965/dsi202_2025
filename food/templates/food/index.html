@@ -77,7 +77,7 @@
               </p>
 
               <div class="hero-buttons">
-                <a href="{% url 'home' %}" class="btn btn-primary me-0 me-sm-2 mx-1" id="orderButton">เริ่มสั่งอาหาร</a>
+                <a href="{% url 'signin' %}" class="btn btn-primary me-0 me-sm-2 mx-1" id="orderButton">เริ่มสั่งอาหาร</a>
               </div>
             </div>
           </div>
@@ -622,21 +622,6 @@
   <!-- Main JS File -->
   <script src="{% static 'assets/js/main.js' %}"></script>
 
-  <script>
-  document.getElementById('orderButton').addEventListener('click', function(event) {
-    event.preventDefault();  // หยุดการ Redirect ชั่วคราว
-    const body = document.querySelector('body');
-    
-    // เพิ่มคลาส fade-out
-    body.classList.add('fade-out');
-    body.classList.add('hidden');
-
-    // รอเวลา 500ms แล้ว Redirect
-    setTimeout(() => {
-      window.location.href = "{% url 'home' %}";
-    }, 500); // เวลา 0.5 วินาที
-  });
-</script>
 
 </body>
 

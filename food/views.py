@@ -285,7 +285,7 @@ def pay(request):
 
 
 
-
+@login_required
 def home(request):
     query = request.GET.get("q", "")
     category_name = request.GET.get('category')

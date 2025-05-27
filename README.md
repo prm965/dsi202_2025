@@ -44,8 +44,6 @@ cd dsi202_2025
 
 2. สร้าง virtual environment และติดตั้ง Django:
 ```bash
-python -m venv env
-source env/bin/activate  # บน Windows ใช้ env\Scripts\activate
 pip install django
 ```
 

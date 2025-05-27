@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 import json
+from django.contrib.auth import logout
 
 from django.views.decorators.http import require_POST
 
@@ -188,6 +189,12 @@ def starter_page(request):
 def signin(request):
     return render(request, 'food/signin.html')
 
+@login_required
+def profile_view(request):
+    return render(request, 'food/profile.html', {
+        'user': request.user  # ส่งข้อมูลผู้ใช้งานไปยัง template
+    })
+
 
 def index(request):
     query = request.GET.get("q", "")
@@ -215,6 +222,9 @@ def index(request):
         "cart_count": request.session.get('cart_count', 0)
     })
 
+from django.utils import timezone
+import uuid
+
 @login_required
 def pay(request):
     cart = request.session.get('cart', {})
@@ -230,9 +240,33 @@ def pay(request):
             pass
 
     # ค่าจัดส่ง
-    delivery_fee = request.session.get('delivery_fee', 21)  # ค่าเริ่มต้น
+    delivery_fee = request.session.get('delivery_fee', 21)
     grand_total = total_price + delivery_fee
 
+    # สร้าง order_number แบบสุ่ม
+    order_number = f"ORD{uuid.uuid4().hex[:10].upper()}"
+
+    # สร้าง Order จริงใน database
+    order = Order.objects.create(
+        user=request.user,
+        total_price=grand_total,
+        is_paid=True,
+    )
+    order.order_number = order_number  # ใส่หมายเลข
+    order.save()
+
+    # เพิ่มข้อความแจ้งเตือนใหม่
+    msg = {
+        "title": f"ยืนยันคำสั่งซื้อ #{order.order_number}",
+        "body": f"ระบบได้รับคำสั่งซื้อของคุณเรียบร้อยแล้ว ยอดรวม {grand_total:.2f} บาท",
+        "timestamp": timezone.now().strftime('%d %b %Y %H:%M')
+    }
+    if 'messages' not in request.session:
+        request.session['messages'] = []
+    request.session['messages'].insert(0, msg)
+    request.session.modified = True
+
+    # QR Code PromptPay
     phone_number = "0922157806"
     payment_url = f"https://promptpay.io/{phone_number}/{grand_total:.2f}"
 
@@ -243,7 +277,9 @@ def pay(request):
         'qr_code_url': payment_url,
         'cart_items': cart,
         'selected_address': selected_address,
+        'order_number': order.order_number  # ✅ ส่งไปหน้า pay.html
     })
+
 
     
 
@@ -431,3 +467,62 @@ def decrease_quantity(request, cart_item_id):
         item.delete()
     return redirect('view_cart')
 
+from .forms import ProfileUpdateForm
+from django.contrib import messages
+
+from .models import UserProfile
+
+@login_required
+def edit_profile(request):
+    # ✅ ตรวจสอบว่าผู้ใช้มีโปรไฟล์หรือไม่
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance=request.user)
+        profile_image = request.POST.get('profile_image')
+        if form.is_valid() and profile_image:
+            form.save()
+            profile.profile_image = profile_image
+            profile.save()
+            return redirect('profile')
+    else:
+        form = ProfileUpdateForm(instance=request.user, initial={
+            'profile_image': profile.profile_image
+        })
+
+    return render(request, 'food/edit_profile.html', {
+        'form': form,
+        'profile_image': profile.profile_image,
+    })
+
+from .models import Review
+
+@login_required
+def review_board(request):
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        rating = int(request.POST.get('rating'))
+        order_id = request.POST.get('order_id')
+        order = get_object_or_404(Order, id=order_id, user=request.user)
+
+        Review.objects.create(
+            user=request.user,
+            content=content,
+            rating=rating,
+            order=order
+        )
+        return redirect('review')
+
+    user_orders = Order.objects.filter(user=request.user, is_paid=True)
+    reviews = Review.objects.select_related('user', 'order').order_by('-created_at')
+
+    return render(request, 'food/review.html', {
+        'user_orders': user_orders,
+        'reviews': reviews
+    })
+
+from django.contrib.auth import logout
+
+def logout_view(request):
+    logout(request)
+    return redirect('signin')

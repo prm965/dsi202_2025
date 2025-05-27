@@ -1,0 +1,129 @@
+{% extends 'food/base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="p-6 bg-[#f9f6fb] min-h-screen">
+  <div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="text-center">
+      <h1 class="text-3xl font-bold text-[#3e8340]">⭐ บอร์ดรีวิว</h1>
+      <p class="text-sm text-gray-600">แสดงความคิดเห็นและประสบการณ์ของคุณเกี่ยวกับการสั่งซื้อ</p>
+    </div>
+
+    <!-- Review Form -->
+    <div class="bg-white rounded-xl shadow p-6">
+<form method="POST">
+  {% csrf_token %}
+  <div class="space-y-4">
+
+    <!-- เลือกออร์เดอร์ -->
+    <div>
+      <label class="block font-semibold text-sm mb-1">เลือกรายการสั่งซื้อ</label>
+<select name="order_id" id="orderDropdown" class="w-full border rounded p-2 text-sm" required onchange="showOrderItems(this)">
+  <option disabled selected>-- กรุณาเลือกออร์เดอร์ --</option>
+  {% for order in user_orders %}
+    <option value="{{ order.id }}" data-items='[
+      {% for item in order.items.all %}
+        {
+          "name": "{{ item.menu_item.name|escapejs }}",
+          "image": "{{ item.menu_item.image.url|escapejs }}",
+          "price": {{ item.price }},
+          "qty": {{ item.quantity }}
+        }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]'>
+      ออเดอร์ #{{ order.order_number }} - {{ order.created_at|date:"d M Y" }}
+    </option>
+  {% endfor %}
+</select>
+
+    </div>
+
+    <!-- พรีวิวเมนู -->
+    <div id="orderItemsPreview" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4"></div>
+
+    <!-- เขียนรีวิว -->
+    <div>
+      <label class="block font-semibold text-sm mb-1">ความคิดเห็นของคุณ</label>
+      <textarea name="content" rows="3" class="w-full border rounded p-2 text-sm" placeholder="พิมพ์รีวิวที่นี่..." required></textarea>
+    </div>
+
+    <!-- เลือกคะแนนเป็นดาว -->
+<div class="flex items-center gap-1" id="starRatingInput">
+  <label class="font-semibold text-sm mr-2">ให้คะแนน:</label>
+  {% for i in "12345" %}
+    <input type="radio" name="rating" value="{{ i }}" id="star{{ i }}" class="hidden peer" required>
+    <label for="star{{ i }}" class="text-2xl text-gray-300 hover:text-yellow-400 peer-checked:text-yellow-400 cursor-pointer">★</label>
+  {% endfor %}
+</div>
+
+
+    <div class="text-right">
+      <button type="submit" class="bg-[#3e8340] text-white px-4 py-2 rounded hover:bg-[#2c6b30]">ส่งรีวิว</button>
+    </div>
+  </div>
+</form>
+
+    <!-- Review List -->
+    <div class="space-y-4">
+      {% for review in reviews %}
+      <div class="bg-white rounded-xl shadow p-4">
+        <div class="flex items-center gap-3">
+          <img src="{% static review.user.userprofile.profile_image %}" class="w-10 h-10 rounded-full" alt="avatar">
+          <div>
+            <p class="font-semibold text-sm">{{ review.user.first_name }} {{ review.user.last_name }}</p>
+            <p class="text-xs text-gray-500">{{ review.created_at|date:"d M Y เวลา H:i" }}</p>
+          </div>
+        </div>
+        <div class="mt-2 text-sm text-gray-800">
+          <p>{{ review.content }}</p>
+          <p class="text-yellow-500 mt-1">
+            {% for i in "12345"|slice:":review.rating" %}★{% endfor %}
+          </p>
+          <p class="text-sm text-gray-600 mt-2">ออเดอร์: #{{ review.order.order_number }}</p>
+<ul class="list-disc list-inside text-sm text-gray-500">
+  {% for item in review.order.items.all %}
+    <li>
+      {{ item.menu_item.name }} x{{ item.quantity }} = 
+      ฿{{ item.get_total_price|floatformat:2 }}
+    </li>
+  {% endfor %}
+</ul>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-center text-gray-500">ยังไม่มีรีวิว</p>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showOrderItems(selectEl) {
+  const selected = selectEl.options[selectEl.selectedIndex];
+  const json = selected.getAttribute('data-items');
+  if (!json) return;
+
+  const items = JSON.parse(json);
+  const container = document.getElementById('orderItemsPreview');
+  container.innerHTML = '';
+
+  items.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'flex items-center gap-3 bg-white p-3 rounded shadow border';
+
+    card.innerHTML = `
+      <img src="${item.image}" class="w-14 h-14 rounded object-cover" alt="${item.name}">
+      <div>
+        <p class="font-semibold text-sm text-[#3e8340]">${item.name}</p>
+        <p class="text-xs text-gray-500">฿${item.price.toFixed(2)} x ${item.qty}</p>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+</script>
+{% endblock %}

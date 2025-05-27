@@ -4,7 +4,7 @@
   <aside class="bg-[#f7efda] w-[320px] p-6 shrink-0 h-full border-l border-gray-200">
   <!-- ข้อมูลผู้ใช้ -->
   <div class="flex items-center mb-6">
-    <img src="{% static 'images/001.svg' %}" class="shadow-lg rounded-full w-16 h-16 mr-4" alt="Profile Image" />
+    <img src="{% static user.userprofile.profile_image %}" class="shadow-lg rounded-full w-16 h-16 mr-4" alt="Profile Image" />
     <div>
       <h4 class="font-medium text-lg mb-1">{{ request.user.first_name }}</h4>
       <h4 class="font-medium text-lg">{{ request.user.last_name }}</h4>

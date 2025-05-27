@@ -111,18 +111,27 @@ class CartItem(models.Model):
 # 7. Order & OrderItem
 # -------------------
 
+import uuid
+
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order_number = models.CharField(max_length=20, unique=True, editable=False, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     total_price = models.FloatField()
     is_paid = models.BooleanField(default=False)
     is_delivered = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        if not self.order_number:
+            self.order_number = f"ORD{uuid.uuid4().hex[:10].upper()}"  # สร้างรหัสคำสั่งซื้อแบบสุ่ม
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"Order #{self.id} by {self.user.username}"
+        return f"Order #{self.order_number} by {self.user.username}"
 
     class Meta:
         verbose_name_plural = "Orders"
+
 
 
 class OrderItem(models.Model):
@@ -136,5 +145,23 @@ class OrderItem(models.Model):
 
     class Meta:
         verbose_name_plural = "Order items"
+
+from django.contrib.auth.models import User
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_image = models.CharField(max_length=100, default='profile/avatar1.png')  # default png
+
+    def __str__(self):
+        return f"{self.user.username} Profile"
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    content = models.TextField()
+    rating = models.PositiveSmallIntegerField(default=5)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 

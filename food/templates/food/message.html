@@ -12,19 +12,15 @@
 
     <!-- Message List -->
     <div class="space-y-4">
-      {% for msg in messages %}
-      <div class="bg-white rounded-xl shadow p-4">
-        <div class="flex justify-between items-start">
-          <div>
-            <h2 class="font-semibold text-[#3e8340]">{{ msg.title }}</h2>
-            <p class="text-sm text-gray-700">{{ msg.body }}</p>
-          </div>
-          <span class="text-xs text-gray-400 whitespace-nowrap">{{ msg.timestamp }}</span>
-        </div>
-      </div>
-      {% empty %}
-      <p class="text-center text-gray-500">ยังไม่มีข้อความใหม่</p>
-      {% endfor %}
+{% for msg in request.session.messages %}
+<div class="bg-white rounded-xl shadow p-4">
+  <h2 class="font-semibold text-[#3e8340]">{{ msg.title }}</h2>
+  <p class="text-sm text-gray-700">{{ msg.body }}</p>
+  <span class="text-xs text-gray-400 whitespace-nowrap">{{ msg.timestamp }}</span>
+</div>
+{% empty %}
+<p class="text-center text-gray-500">ยังไม่มีข้อความใหม่</p>
+{% endfor %}
     </div>
 
   </div>

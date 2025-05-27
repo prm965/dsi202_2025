@@ -1,0 +1,42 @@
+{% extends 'food/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="p-6 bg-[#f9f6fb] min-h-screen">
+  <div class="max-w-3xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="text-center">
+      <h1 class="text-3xl font-bold text-[#3e8340]">👤 โปรไฟล์ผู้ใช้</h1>
+      <p class="text-sm text-gray-600">ดูข้อมูลบัญชีของคุณและแก้ไขโปรไฟล์</p>
+    </div>
+
+    <!-- Profile Summary -->
+    <div class="bg-white rounded-xl shadow p-6 space-y-4">
+      <div class="flex items-center gap-4">
+        <img src="{% static user.userprofile.profile_image %}" class="shadow-lg rounded-full w-16 h-16 mr-4" alt="Profile Image" />
+        <div>
+          <h2 class="text-lg font-semibold text-[#3e8340]">{{ user.first_name }} {{ user.last_name }}</h2>
+          <p class="text-sm text-gray-600">อีเมล: {{ user.email }}</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
+        <div>
+          <span class="font-semibold">ชื่อผู้ใช้:</span>
+          <p>{{ user.username }}</p>
+        </div>
+        <div>
+          <span class="font-semibold">วันสมัครสมาชิก:</span>
+          <p>{{ user.date_joined|date:"d M Y" }}</p>
+        </div>
+      </div>
+
+      <div class="pt-4">
+        <a href="{% url 'edit_profile' %}" class="inline-block bg-[#3e8340] text-white px-5 py-2 rounded-md text-sm hover:bg-[#2e6b30] transition">แก้ไขโปรไฟล์</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

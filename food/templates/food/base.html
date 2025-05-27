@@ -121,18 +121,18 @@
             <i class="fi fi-sr-envelope"></i>
             <span>ข้อความ</span>
           </a>
-          <a href="profile.html" class="menu-item" id="profile-link">
+          <a href="{% url 'profile' %}" class="menu-item" id="profile-link">
             <i class="fi fi-sr-user"></i>
             <span>โปรไฟล์ผู้ใช้</span>
           </a>
-          <a href="profile.html" class="menu-item" id="feedback">
+          <a href="{% url 'review' %}" class="menu-item" id="feedback">
             <i class="fi fi-sr-feedback"></i>
             <span>บอร์ดรีวิว</span>
           </a>
-          <a href="{% url 'home' %}" class="menu-item">
-            <i class="fi fi-sr-exit"></i>
-            <span>ออกจากระบบ</span>
-          </a>
+<a href="{% url 'logout' %}" class="menu-item">
+  <i class="fi fi-sr-exit"></i>
+  <span>ออกจากระบบ</span>
+</a>
         </nav>
         </div>
     </aside>

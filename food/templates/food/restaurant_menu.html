@@ -1,0 +1,123 @@
+{% extends 'food/base.html' %}
+{% block content %}
+<div class="p-6 bg-[#f9f6fb] min-h-screen">
+
+  <!-- ปุ่มย้อนกลับ -->
+  <div class="max-w-5xl mx-auto mb-4">
+    <a href="{% url 'home' %}" class="inline-flex items-center text-sm text-gray-600 hover:text-[#3e8340]">
+      ← กลับหน้าหลัก
+    </a>
+  </div>
+
+  <!-- กล่องร้านอาหาร -->
+  <div class="max-w-5xl mx-auto mb-6">
+    <div class="bg-white rounded-2xl shadow p-6 flex flex-col md:flex-row items-center gap-6">
+
+      <!-- รูปภาพร้านอาหาร -->
+      <div class="w-full md:w-1/3 aspect-square overflow-hidden rounded-xl">
+        <img src="{{ restaurant.image.url }}" alt="{{ restaurant.name }}" class="w-full h-full object-cover">
+      </div>
+
+      <!-- รายละเอียดร้านอาหาร -->
+      <div class="flex-1 space-y-2">
+        <h1 class="text-2xl font-bold text-[#3e8340]">{{ restaurant.name }}</h1>
+        <p class="text-sm text-gray-600">
+          <i class="fi fi-sr-clock-three"></i>
+          {{ restaurant.open_time }} - {{ restaurant.close_time }}
+        </p>
+        <p class="text-sm text-gray-600">
+          <i class="fi fi-sr-star text-yellow-500"></i>
+          คะแนนรีวิว: {{ restaurant.rating|floatformat:1 }} / 5
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- กล่องเมนูอาหาร -->
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-xl font-bold text-[#3e8340] mb-3">เมนูจากร้านนี้</h2>
+    <div class="flex flex-wrap gap-6">
+      {% for item in menu_items %}
+      <div class="bg-[#fff0f5] rounded-2xl shadow p-4 w-[280px] text-sm">
+        <!-- รูปภาพ -->
+        <div class="aspect-square rounded-xl overflow-hidden mb-3">
+          <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-full object-cover" />
+        </div>
+
+        <!-- ชื่อเมนู -->
+        <h3 class="text-base font-bold text-gray-900 mb-1">
+          <a href="{% url 'menu_detail' item.id %}" class="hover:underline">{{ item.name }}</a>
+        </h3>
+
+        <!-- ส่วนลด + ชื่อร้าน -->
+        <div class="flex items-center gap-2 text-sm mb-2">
+          <span class="bg-red-500 text-white font-bold text-xs px-2 py-0.5 rounded">-{{ item.discount_percent }}%</span>
+          <span class="truncate text-gray-700">{{ item.restaurant.name }}</span>
+        </div>
+
+        <!-- เวลา / คะแนน -->
+        <div class="flex justify-between text-xs text-gray-600 mb-1 items-start">
+          <div>
+            <div class="flex items-center gap-1">
+              <i class="fi fi-sr-clock-three text-[#1D1D1B] text-sm"></i>
+              {{ item.restaurant.open_time }} - {{ item.restaurant.close_time }}
+            </div>
+            <div class="flex items-center gap-1">
+              <i class="fi fi-sr-star text-[#3e8340] text-sm"></i>
+              {{ item.restaurant.rating|floatformat:1 }}
+            </div>
+          </div>
+
+          <!-- ราคาสินค้า -->
+          <div class="flex flex-col justify-center items-center gap-0.5 bg-pink-200 px-3 py-1.5 rounded-lg text-right text-sm">
+            <span class="line-through text-gray-500 text-xs leading-none">฿{{ item.price|floatformat:0 }}</span>
+            <span class="text-xl font-bold text-gray-900 leading-tight">฿{{ item.final_price|floatformat:0 }}</span>
+          </div>
+        </div>
+
+        <!-- Allergens -->
+        <div class="text-xs text-gray-500 mb-2 space-x-1">
+          {% for allergen in item.allergens.all %}
+            <span class="inline-block bg-red-100 text-red-600 px-2 py-0.5 rounded-lg">{{ allergen.name }}</span>
+          {% endfor %}
+        </div>
+
+        <!-- ปุ่มเพิ่มสินค้า -->
+        <form method="POST" action="{% url 'add_to_cart' item.id %}" class="flex justify-between items-center">
+          {% csrf_token %}
+          <div class="flex items-center gap-2">
+            <div class="flex items-center bg-white border border-gray-400 rounded-lg px-2 py-1">
+              <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="decrease">−</button>
+              <input type="number" name="quantity" value="1" min="1"
+                     class="quantity-input w-10 h-6 text-center border-none outline-none font-semibold text-base text-gray-800 leading-none" />
+              <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="increase">+</button>
+            </div>
+
+            <button type="submit" class="bg-black text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition">
+              <i class="fi fi-sr-shopping-cart text-[#ffffff] text-sm"></i>
+              <span>เพิ่มในตะกร้า</span>
+            </button> 
+          </div>           
+        </form>
+      </div>
+      {% empty %}
+      <p class="text-gray-500">ไม่มีเมนูอาหารในร้านนี้</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const input = button.closest('form').querySelector('.quantity-input');
+        let value = parseInt(input.value);
+        if (button.dataset.type === 'increase') value++;
+        if (button.dataset.type === 'decrease' && value > 1) value--;
+        input.value = value;
+      });
+    });
+  });
+</script>
+{% endblock %}

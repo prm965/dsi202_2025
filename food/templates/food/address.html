@@ -20,7 +20,7 @@
       <div class="box">
         <div class="inner-box">
           <div class="forms-wrap">
-            <form action="{% url 'home' %}" method="POST" class="sign-in-form" autocomplete="off">
+            <form action="{% url 'select_address' %}?next={{ request.GET.next|default:'home' }}" method="POST" class="sign-in-form" autocomplete="off">
               {% csrf_token %}
               <div class="heading">
                 <h2>ที่อยู่</h2>

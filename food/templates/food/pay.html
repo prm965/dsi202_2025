@@ -1,147 +1,327 @@
 {% extends 'food/base.html' %}
 
 {% block content %}
-<div class="flex h-screen">
+<div class="p-6 bg-[#f9f6fb] min-h-screen">
+  <div class="max-w-5xl mx-auto space-y-6">
 
-    <!-- Main Content (Middle) -->
-    <div class="flex-1 p-6 space-y-6 bg-[#f9f6fb]">
-
-        <!-- Header -->
-        <h1 class="text-2xl font-bold text-[#3e8340]">การชำระเงิน</h1>
-        <p>กรุณาตรวจสอบรายการสินค้าด้านล่างและเลือกวิธีการชำระเงิน</p>
-
-        <!-- Order Summary Table -->
-        <div class="overflow-x-auto bg-white shadow-md rounded-lg p-4">
-            <table class="table-auto w-full border">
-                <thead>
-                    <tr class="bg-gray-100">
-                        <th class="px-4 py-2 text-black border">ชื่อสินค้า</th>
-                        <th class="px-4 py-2 text-black border">จำนวน</th>
-                        <th class="px-4 py-2 text-black border">ราคา</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item_id, item in cart_items.items %}
-                    <tr class="bg-white">
-                        <td class="px-4 py-2 text-black border">{{ item.name }}</td>
-                        <td class="px-4 py-2 text-black border">{{ item.quantity }}</td>
-                        <td class="px-4 py-2 text-black border">฿{{ item.price|floatformat:2 }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Total Price -->
-        <div class="my-4">
-            <h3 class="text-lg font-semibold">ยอดรวม: ฿{{ total_price|floatformat:2 }}</h3>
-        </div>
-
-        <!-- QR Code for Payment -->
-        <div class="my-4">
-            <h4 class="text-lg">QR Code สำหรับการชำระเงิน</h4>
-            <!-- แสดง QR Code ที่สร้างจาก PromptPay.io -->
-            <img src="{{ qr_code_url }}" alt="QR Code" class="max-w-full h-auto" />
-        </div>
-
-        <!-- Upload Payment Slip -->
-        <div class="my-4">
-            <h4 class="text-lg">อัปโหลดสลิปการชำระเงิน</h4>
-            <input type="file" name="payment_slip" class="border p-2 rounded-md w-full" />
-        </div>
-
-        <!-- Confirm Payment Button -->
-        <div class="my-4">
-            <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-lg text-lg font-medium hover:bg-blue-700 transition" onclick="showPopup()">ยืนยันการชำระเงิน</button>
-        </div>
+    <!-- Header -->
+    <div>
+      <h1 class="text-2xl font-bold text-[#3e8340]">🧾 การชำระเงิน</h1>
+      <p class="text-sm text-gray-600">กรุณาตรวจสอบรายการสินค้าด้านล่างและชำระเงินตามขั้นตอน</p>
     </div>
 
+    <!-- Address Section -->
+<div class="bg-white rounded-xl shadow-md p-4">
+  <h2 class="text-lg font-bold mb-2">📍 ที่อยู่สำหรับจัดส่ง</h2>
+  {% if selected_address %}
+    <p class="text-sm text-gray-700">
+      {{ selected_address.name }}<br>
+      {{ selected_address.house_number }}, {{ selected_address.sub_district }},
+      {{ selected_address.district }}, {{ selected_address.province }}, {{ selected_address.postal_code }}
+    </p>
+  {% else %}
+    <a href="{% url 'address' %}?next=pay" class="text-sm text-blue-500 underline">เลือกที่อยู่จัดส่ง</a>
+  {% endif %}
 </div>
 
-<!-- Popup for Thank You -->
-<div id="thankYouPopup" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 hidden">
-    <div class="bg-white p-6 rounded-lg w-1/3">
-        <h2 class="text-2xl font-bold text-green-600">ขอบคุณสำหรับการสั่งซื้อ!</h2>
-        <p>กรุณาให้คะแนนบริการของเรา</p>
-        <div class="my-4">
-            <label for="rating" class="block text-sm">คะแนน:</label>
-            <input type="number" id="rating" min="1" max="5" class="border p-2 rounded-md w-full" />
+
+    <!-- Delivery Method Section -->
+    <div class="bg-white rounded-xl shadow-md p-4">
+      <h2 class="text-lg font-bold mb-2">🚚 ตัวเลือกการจัดส่ง</h2>
+      <div class="space-y-2">
+        <div onclick="selectDeliveryOption(this, 37)" class="delivery-option flex justify-between items-center p-3 border rounded-lg cursor-pointer hover:border-[#3e8340] bg-[#ffeef4]">
+          <span>ส่งตรงทันใจ • &lt; 28 นาที</span>
+          <span class="font-semibold">฿37</span>
         </div>
-        <button class="bg-green-600 text-white px-4 py-2 rounded-md" onclick="closePopup()">ยืนยัน</button>
+        <div onclick="selectDeliveryOption(this, 21)" class="delivery-option flex justify-between items-center p-3 border rounded-lg cursor-pointer border-[#3e8340] bg-[#ddec9b]">
+          <span>ส่งปกติ • 37 นาที</span>
+          <span class="font-semibold">฿21</span>
+        </div>
+        <div onclick="selectDeliveryOption(this, 15)" class="delivery-option flex justify-between items-center p-3 border rounded-lg cursor-pointer hover:border-[#3e8340] bg-[#fddce5]">
+          <span>ส่งถูก • &gt; 48 นาที</span>
+          <span class="font-semibold">฿15</span>
+        </div>
+      </div>
     </div>
+
+    <!-- JavaScript Delivery Option Logic -->
+<script>
+  function selectDeliveryOption(el, fee) {
+    fetch("{% url 'select_delivery_fee' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({ delivery_fee: fee })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'ok') {
+        location.reload();
+      } else {
+        alert("ไม่สามารถตั้งค่าค่าจัดส่ง: " + data.message);
+      }
+    })
+    .catch(error => console.error("Delivery fee error:", error));
+
+    document.querySelectorAll('.delivery-option').forEach(opt => {
+      opt.classList.remove('border-[#3e8340]', 'bg-[#ddec9b]');
+      opt.classList.add('bg-white');
+    });
+    el.classList.add('border-[#3e8340]', 'bg-[#ddec9b]');
+    el.classList.remove('bg-[#ffeef4]', 'bg-[#fddce5]');
+  }
+</script>
+    <!-- Order Summary Table -->
+    <div class="bg-white rounded-xl shadow-md p-4">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-left bg-gray-100 text-gray-700">
+            <th class="p-2">ชื่อสินค้า</th>
+            <th class="p-2 text-center">จำนวน</th>
+            <th class="p-2 text-right">ราคา</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item_id, item in cart_items.items %}
+          <tr class="border-t">
+            <td class="p-2">{{ item.name }}</td>
+            <td class="p-2 text-center">{{ item.quantity }}</td>
+            <td class="p-2 text-right">฿{{ item.price|floatformat:2 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+<!-- Summary Table -->
+<div class="bg-white rounded-xl shadow-md p-4">
+  <table class="w-full text-sm">
+    <tbody>
+      {% for item_id, item in cart_items.items %}
+      <tr>
+        <td class="p-2">{{ item.name }} x{{ item.quantity }}</td>
+        <td class="p-2 text-right">฿{{ item.price|floatformat:2 }}</td>
+      </tr>
+      {% endfor %}
+      <tr class="border-t font-semibold">
+        <td class="p-2">ค่าสินค้ารวม</td>
+        <td class="p-2 text-right">฿{{ total_price|floatformat:2 }}</td>
+      </tr>
+      <tr>
+        <td class="p-2">ค่าจัดส่ง</td>
+        <td class="p-2 text-right">฿{{ delivery_fee|floatformat:2 }}</td>
+      </tr>
+      <tr class="border-t font-bold text-[#3e8340] text-lg">
+        <td class="p-2">ยอดรวมทั้งหมด</td>
+        <td class="p-2 text-right">฿{{ grand_total|floatformat:2 }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+        <!-- Eco Options -->
+    <div class="bg-white rounded-xl shadow-md p-4">
+      <h2 class="text-lg font-bold mb-2">🌱 รักษ์โลกกับเรา</h2>
+      <div class="space-y-2">
+        <label class="flex items-center justify-between border p-3 rounded-lg cursor-pointer">
+          <span>ฉันต้องการซอส / เครื่องปรุง (ถ้ามี)</span>
+          <input type="checkbox" class="accent-[#3e8340] w-5 h-5">
+        </label>
+        <label class="flex items-center justify-between border p-3 rounded-lg cursor-pointer">
+          <span>ฉันต้องการช้อนส้อมพลาสติก</span>
+          <input type="checkbox" class="accent-[#3e8340] w-5 h-5">
+        </label>
+        <div class="bg-green-100 text-green-800 text-sm p-3 rounded-lg flex items-center justify-between">
+          <span><strong>ขอบคุณที่ช่วยลดขยะไปถึง 2 ชิ้น</strong><br><span class="text-xs text-green-700">ธรรมชาติที่ดี สร้างได้ตั้งแต่วันนี้</span></span>
+          <img src="https://cdn-icons-png.flaticon.com/512/427/427735.png" class="w-10 h-10" alt="eco" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Promotion Section -->
+    <div class="bg-[#f4c2ce] p-4 rounded-xl shadow flex items-center justify-between">
+      <div>
+        <p class="text-sm font-semibold">ลดค่าส่งเพิ่ม ฿20 เมื่อชำระผ่าน True Wallet</p>
+      </div>
+      <button class="text-sm text-blue-800 font-medium underline">ดูเพิ่มเติม</button>
+    </div>
+
+    <!-- VIP Banner -->
+    <div class="bg-[#badd7f] rounded-xl shadow p-4 flex items-center justify-between">
+      <div>
+        <p class="text-sm font-bold text-[#3e8340]">สมัคร ฿19 ส่งฟรี ทั้งเดือน</p>
+        <p class="text-xs text-[#3e8340]">รับเพิ่ม! ชุดคูปองลดค่าอาหาร 15%</p>
+      </div>
+      <button class="bg-white text-[#3e8340] border border-[#3e8340] px-3 py-1 rounded-md text-sm">สมัครเลย</button>
+    </div>
+
+    <!-- QR Code Section -->
+    <div class="bg-white rounded-xl shadow-md p-4">
+      <h2 class="text-lg font-bold mb-2">📱 QR Code สำหรับการชำระเงิน</h2>
+      <img src="{{ qr_code_url }}" alt="QR Code" class="mx-auto w-48 h-48" />
+    </div>
+
+    <!-- Upload Slip -->
+    <div class="bg-white rounded-xl shadow-md p-4">
+      <h2 class="text-lg font-bold mb-2">📤 อัปโหลดสลิปการชำระเงิน</h2>
+      <input type="file" name="payment_slip" class="w-full border rounded-lg p-2 text-sm" />
+    </div>
+
+    <!-- Confirm Payment Button -->
+    <div class="text-center">
+      <button type="button" class="bg-[#3e8340] text-white px-6 py-3 rounded-xl text-base font-semibold hover:bg-[#2c6b30] transition" onclick="showPopup()">
+        ✅ ยืนยันการชำระเงิน
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Thank You Popup -->
+<div id="thankYouPopup" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+  <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md text-center space-y-4">
+    <h2 class="text-2xl font-bold text-[#3e8340]">ขอบคุณสำหรับการสั่งซื้อ!</h2>
+    <p class="text-sm text-gray-600">กรุณาให้คะแนนบริการของเรา</p>
+    <div id="starRating" class="flex justify-center gap-2 text-3xl">
+      <span class="star cursor-pointer text-gray-400" data-value="1">★</span>
+      <span class="star cursor-pointer text-gray-400" data-value="2">★</span>
+      <span class="star cursor-pointer text-gray-400" data-value="3">★</span>
+      <span class="star cursor-pointer text-gray-400" data-value="4">★</span>
+      <span class="star cursor-pointer text-gray-400" data-value="5">★</span>
+    </div>
+    <button class="bg-[#3e8340] text-white px-6 py-2 rounded-xl text-sm font-semibold hover:bg-[#2c6b30]" onclick="submitReview()">
+      ส่งคะแนนและกลับหน้าแรก
+    </button>
+  </div>
 </div>
 
 <script>
-    function showPopup() {
-        document.getElementById('thankYouPopup').classList.remove('hidden');
+  function showPopup() {
+    document.getElementById('thankYouPopup').classList.remove('hidden');
+  }
+
+  function submitReview() {
+    const rating = document.getElementById('rating').value;
+    if (rating >= 1 && rating <= 5) {
+      clearCart();
+    } else {
+      alert("กรุณาให้คะแนนระหว่าง 1 ถึง 5");
     }
+  }
 
-    function closePopup() {
-        document.getElementById('thankYouPopup').classList.add('hidden');
-        // Optionally, handle the review submission here
-    }
+  function clearCart() {
+    fetch('/clear-cart/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message === 'Cart cleared') {
+        window.location.href = '{% url "home" %}';
+      } else {
+        alert("เกิดข้อผิดพลาดในการล้างตะกร้า");
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
 
-    function showPopup() {
-        document.getElementById('thankYouPopup').classList.remove('hidden');
-    }
-
-    function submitReview() {
-        const rating = document.getElementById('rating').value;
-
-        // Make sure rating is between 1 and 5
-        if (rating >= 1 && rating <= 5) {
-            // Call function to clear cart after review submission
-            clearCart();
-
-            // Close the popup
-            closePopup();
-        } else {
-            alert("กรุณาให้คะแนนระหว่าง 1 ถึง 5");
-        }
-    }
-
-    function closePopup() {
-        // ส่งคำขอลบรายการในตะกร้า
-        fetch('/clear-cart/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === 'Cart cleared') {
-                // อัปเดต UI หรือรีเฟรชหน้าเว็บหลังจากล้างตะกร้า
-                document.querySelectorAll("[id^='cart-item-']").forEach(item => item.remove());
-                document.querySelector('.badge').textContent = 0;
-                window.location.href = "{% url 'home' %}";  // ส่งผู้ใช้ไปยังหน้า home
-            } else {
-                alert("มีข้อผิดพลาดในการล้างตะกร้า");
-            }
-        })
-        .catch(error => console.error('Error:', error));
-
-        // ปิด Popup หลังจากการยืนยัน
-        document.getElementById('thankYouPopup').classList.add('hidden');
-    }    
-
-    function clearCart() {
-        fetch('/clear-cart/', {  // Use the correct URL '/clear-cart/'
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,  // Include CSRF token
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({})  // Optional: Send empty JSON body if not required
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Cart cleared:", data.message);
-            // Optionally, update UI to reflect empty cart
-            window.location.href = '/home/';  // Redirect to home after clearing the cart
-        })
-        .catch(error => console.error('Error:', error));
-    }    
+  function selectOption(el) {
+    document.querySelectorAll('.delivery-option').forEach(opt => {
+      opt.classList.remove('border-[#3e8340]', 'bg-[#ddec9b]');
+      opt.classList.add('bg-white');
+    });
+    el.classList.add('border-[#3e8340]', 'bg-[#ddec9b]');
+    el.classList.remove('bg-[#ffeef4]', 'bg-[#fddce5]');
+  }
 </script>
+
+
+<!-- Thank You Popup -->
+<div id="thankYouPopup" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+  <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md text-center space-y-4">
+    <h2 class="text-2xl font-bold text-[#3e8340]">ขอบคุณสำหรับการสั่งซื้อ!</h2>
+    <p class="text-sm text-gray-600">กรุณาให้คะแนนบริการของเรา</p>
+    <div id="starRating" class="flex justify-center gap-2 text-2xl">
+      <span class="star cursor-pointer text-gray-400" data-value="1">★</span>
+      <span class="star cursor-pointer text-gray-400" data-value="2">★</span>
+      <span class="star cursor-pointer text-gray-400" data-value="3">★</span>
+      <span class="star cursor-pointer text-gray-400" data-value="4">★</span>
+      <span class="star cursor-pointer text-gray-400" data-value="5">★</span>
+    </div>
+    <button class="bg-[#3e8340] text-white px-6 py-2 rounded-xl text-sm font-semibold hover:bg-[#2c6b30]"
+            onclick="submitReview()">
+      ส่งคะแนนและกลับหน้าแรก
+    </button>
+  </div>
+</div>
+
+<script>
+  let selectedRating = 0;
+
+  function showPopup() {
+    document.getElementById('thankYouPopup').classList.remove('hidden');
+  }
+
+  function submitReview() {
+    if (selectedRating >= 1 && selectedRating <= 5) {
+      clearCart();
+    } else {
+      alert("กรุณาให้คะแนนระหว่าง 1 ถึง 5 ดาว");
+    }
+  }
+
+  function clearCart() {
+    fetch('/clear-cart/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message === 'Cart cleared') {
+        window.location.href = '{% url "home" %}';
+      } else {
+        alert("เกิดข้อผิดพลาดในการล้างตะกร้า");
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
+  function selectOption(el) {
+    document.querySelectorAll('.delivery-option').forEach(opt => {
+      opt.classList.remove('border-[#3e8340]', 'bg-[#ddec9b]');
+      opt.classList.add('bg-white');
+    });
+    el.classList.add('border-[#3e8340]', 'bg-[#ddec9b]');
+    el.classList.remove('bg-[#ffeef4]', 'bg-[#fddce5]');
+  }
+
+  // ⭐ Star rating logic
+  document.querySelectorAll('.star').forEach(star => {
+    star.addEventListener('click', () => {
+      selectedRating = parseInt(star.dataset.value);
+      updateStarColors();
+    });
+  });
+
+  function updateStarColors() {
+    document.querySelectorAll('.star').forEach(star => {
+      const value = parseInt(star.dataset.value);
+      star.classList.toggle('text-yellow-400', value <= selectedRating);
+      star.classList.toggle('text-gray-400', value > selectedRating);
+    });
+  }
+</script>
+
 
 {% endblock %}

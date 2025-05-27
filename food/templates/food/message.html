@@ -1,0 +1,32 @@
+{% extends 'food/base.html' %}
+
+{% block content %}
+<div class="p-6 bg-[#f9f6fb] min-h-screen">
+  <div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="text-center">
+      <h1 class="text-3xl font-bold text-[#3e8340]">📨 กล่องข้อความ</h1>
+      <p class="text-sm text-gray-600">ติดตามการแจ้งเตือนและข้อความจากร้านค้าหรือระบบ</p>
+    </div>
+
+    <!-- Message List -->
+    <div class="space-y-4">
+      {% for msg in messages %}
+      <div class="bg-white rounded-xl shadow p-4">
+        <div class="flex justify-between items-start">
+          <div>
+            <h2 class="font-semibold text-[#3e8340]">{{ msg.title }}</h2>
+            <p class="text-sm text-gray-700">{{ msg.body }}</p>
+          </div>
+          <span class="text-xs text-gray-400 whitespace-nowrap">{{ msg.timestamp }}</span>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-center text-gray-500">ยังไม่มีข้อความใหม่</p>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

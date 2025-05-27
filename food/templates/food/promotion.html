@@ -1,0 +1,29 @@
+{% extends 'food/base.html' %}
+
+{% block content %}
+<div class="p-6 bg-[#f9f6fb] min-h-screen">
+  <div class="max-w-5xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="text-center">
+      <h1 class="text-3xl font-bold text-[#3e8340]">🎁 โปรโมชั่น</h1>
+      <p class="text-sm text-gray-600">รวมข้อเสนอพิเศษและคูปองลดราคาสำหรับคุณ</p>
+    </div>
+
+    <!-- Promotions Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for promo in promotions %}
+      <div class="bg-white rounded-xl shadow p-4 space-y-2">
+        <img src="{{ promo.image_url }}" alt="{{ promo.title }}" class="w-full h-40 object-cover rounded-lg">
+        <h2 class="text-lg font-semibold text-[#3e8340]">{{ promo.title }}</h2>
+        <p class="text-sm text-gray-600">{{ promo.description }}</p>
+        <span class="inline-block text-xs text-gray-500">หมดเขต: {{ promo.expiry_date }}</span>
+      </div>
+      {% empty %}
+      <p class="col-span-full text-center text-gray-500">ยังไม่มีโปรโมชั่นในขณะนี้</p>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

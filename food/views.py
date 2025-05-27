@@ -6,7 +6,65 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-import qrcode
+import json
+
+from django.views.decorators.http import require_POST
+
+from datetime import date
+
+def promotion_page(request):
+    promotions = [
+        {
+            "title": "ส่วนลด 50% เมื่อสั่งครบ 300 บาท",
+            "description": "ใช้ได้เฉพาะวันนี้เท่านั้น!",
+            "expiry_date": date(2025, 6, 30),
+            "image_url": "/static/images/promo1.jpg"
+        },
+        {
+            "title": "ส่งฟรีทั่วประเทศ",
+            "description": "เมื่อใช้คูปองโค้ด: FREEDEL",
+            "expiry_date": date(2025, 7, 10),
+            "image_url": "/static/images/promo2.jpg"
+        }
+    ]
+    return render(request, 'food/promotion.html', {
+        'promotions': promotions
+    })
+
+@login_required
+def message_page(request):
+    messages = [
+        {"title": "อัปเดตออเดอร์ #1234", "body": "ออเดอร์ของคุณกำลังถูกจัดเตรียม", "timestamp": "27 พ.ค. 2025 - 14:35"},
+        {"title": "โปรโมชั่นใหม่!", "body": "รับส่วนลด 10% วันนี้เท่านั้น", "timestamp": "26 พ.ค. 2025 - 09:00"},
+    ]
+    return render(request, 'food/message.html', {'messages': messages})
+
+
+@require_POST
+@login_required
+def select_address(request):
+    selected_address_id = request.POST.get('selected_address')
+    if selected_address_id:
+        request.session['selected_address'] = int(selected_address_id)
+
+    # รับ next จาก query string แล้ว redirect ไปยังหน้าเดิม
+    next_url = request.GET.get('next', 'home')
+    return redirect(next_url)
+
+@csrf_exempt
+@login_required
+def select_delivery_fee(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            delivery_fee = float(data.get('delivery_fee', 0))
+            request.session['delivery_fee'] = delivery_fee
+            request.session.modified = True
+            return JsonResponse({'status': 'ok'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    return JsonResponse({'status': 'invalid method'}, status=405)
+
 
 def signin(request):
     return render(request, 'food/signin.html')
@@ -14,6 +72,16 @@ def signin(request):
 @login_required
 def address_list(request):
     addresses = Address.objects.filter(user=request.user)
+
+    if request.method == 'POST':
+        selected_address_id = request.POST.get('selected_address')
+        if selected_address_id:
+            request.session['selected_address'] = int(selected_address_id)
+
+        # ถ้า parameter 'next' ถูกส่งมาด้วย ให้ redirect กลับไปยังหน้านั้น
+        next_url = request.GET.get('next', 'home')
+        return redirect(next_url)
+
     return render(request, 'food/address.html', {
         'addresses': addresses,
     })
@@ -28,6 +96,14 @@ def clear_cart(request):
         return JsonResponse({'message': 'Cart cleared', 'redirect_url': '/home/'}, status=200)
 
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
+def restaurant_menu(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    menu_items = MenuItem.objects.filter(restaurant=restaurant)
+    return render(request, 'food/restaurant_menu.html', {
+        'restaurant': restaurant,
+        'menu_items': menu_items
+    })
 
 @login_required
 def add_address(request):
@@ -141,25 +217,36 @@ def index(request):
 
 @login_required
 def pay(request):
-    # ดึงข้อมูลสินค้าจากตะกร้า
     cart = request.session.get('cart', {})
-    
-    # คำนวณยอดรวม
-    total_price = 0
-    for item in cart.values():
-        total_price += item['price'] * item['quantity']
-    
-    # หมายเลขโทรศัพท์ของคุณที่เชื่อมกับ PromptPay
-    phone_number = "0922157806"  # หมายเลขพร้อมเพย์ที่คุณใช้งาน
-    
-    # สร้าง URL สำหรับการใช้ใน promptpay.io
-    payment_url = f"https://promptpay.io/{phone_number}/{total_price:.2f}"
+    total_price = sum(item['price'] * item['quantity'] for item in cart.values())
+
+    # ที่อยู่จัดส่ง
+    selected_address = None
+    selected_address_id = request.session.get('selected_address')
+    if selected_address_id:
+        try:
+            selected_address = Address.objects.get(id=selected_address_id, user=request.user)
+        except Address.DoesNotExist:
+            pass
+
+    # ค่าจัดส่ง
+    delivery_fee = request.session.get('delivery_fee', 21)  # ค่าเริ่มต้น
+    grand_total = total_price + delivery_fee
+
+    phone_number = "0922157806"
+    payment_url = f"https://promptpay.io/{phone_number}/{grand_total:.2f}"
 
     return render(request, 'food/pay.html', {
         'total_price': total_price,
-        'qr_code_url': payment_url,  # ส่ง URL สำหรับ QR Code ไปยังเทมเพลต
-        'cart_items': cart  # ส่งข้อมูลสินค้าที่อยู่ในตะกร้าไปยังเทมเพลต
+        'delivery_fee': delivery_fee,
+        'grand_total': grand_total,
+        'qr_code_url': payment_url,
+        'cart_items': cart,
+        'selected_address': selected_address,
     })
+
+    
+
 
 
 

@@ -1,34 +1,82 @@
 {% extends 'food/base.html' %}
 {% block content %}
-<div class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow space-y-4">
+<div class="p-6 bg-[#f9f6fb] min-h-screen">
 
-  <h1 class="text-2xl font-bold text-[#3e8340]">{{ menu_item.name }}</h1>
+  <!-- ปุ่มย้อนกลับ -->
+  <div class="max-w-5xl mx-auto mb-4">
+    <a href="{% url 'home' %}" class="inline-flex items-center text-sm text-gray-600 hover:text-[#3e8340]">
+      ← กลับหน้าหลัก
+    </a>
+  </div>
+  
+  <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col md:flex-row">
+    
 
-  <img src="{{ menu_item.image.url }}" class="w-full rounded-xl h-64 object-cover" alt="{{ menu_item.name }}">
+    <!-- รูปภาพฝั่งซ้าย (สี่เหลี่ยมจัตุรัส) -->
+    <div class="md:w-1/2 aspect-square overflow-hidden">
+      <img src="{{ menu_item.image.url }}" alt="{{ menu_item.name }}" class="w-full h-full object-cover">
+    </div>
 
-  <p><strong>ราคาเต็ม:</strong> ฿{{ menu_item.price }}</p>
-  <p><strong>ลด:</strong> {{ menu_item.discount_percent }}%</p>
-  <p><strong>ราคาหลังหัก:</strong> <span class="text-[#3e8340] font-semibold">฿{{ menu_item.final_price }}</span></p>
+    <!-- ข้อมูลฝั่งขวา -->
+    <div class="md:w-1/2 p-6 flex flex-col justify-between">
+      <div class="space-y-3">
+        <h1 class="text-2xl font-bold text-[#3e8340]">{{ menu_item.name }}</h1>
 
-  <p>
-    <strong>ส่วนผสมที่แพ้:</strong>
-    {% for allergen in menu_item.allergens.all %}
-      <span class="inline-block bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">{{ allergen.name }}</span>
-    {% empty %}
-      ไม่มี
-    {% endfor %}
-  </p>
+        <p class="text-gray-700 text-sm"><strong>ร้านอาหาร:</strong> {{ menu_item.restaurant.name }}</p>
+        <p class="text-gray-700 text-sm"><strong>หมวดหมู่:</strong> {{ menu_item.category.name }}</p>
 
-  <p><strong>รายละเอียด:</strong> {{ menu_item.description }}</p>
+        <div class="flex items-baseline gap-3">
+          <span class="line-through text-gray-400 text-sm">฿{{ menu_item.price|floatformat:0 }}</span>
+          <span class="text-xl font-bold text-pink-600">฿{{ menu_item.final_price|floatformat:0 }}</span>
+          <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded">-{{ menu_item.discount_percent }}%</span>
+        </div>
 
-  <!-- ปุ่มเพิ่มลงตะกร้า -->
-  <form method="POST" action="{% url 'add_to_cart' menu_item.id %}" class="mt-4 flex items-center gap-2">
-    {% csrf_token %}
-    <input type="number" name="quantity" min="1" value="1" class="w-20 border px-2 py-1 rounded">
-    <button type="submit" class="bg-[#3e8340] text-white px-5 py-2 rounded-full hover:bg-[#2f6e30] transition">
-      เพิ่มลงตะกร้า
-    </button>
-  </form>
+        <p class="text-gray-800 text-sm leading-relaxed"><strong>รายละเอียด:</strong> {{ menu_item.description }}</p>
 
+        <div>
+          <p class="text-sm font-semibold mb-1">ส่วนผสมที่แพ้:</p>
+          <div class="flex flex-wrap gap-2">
+            {% for allergen in menu_item.allergens.all %}
+              <span class="inline-block bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">{{ allergen.name }}</span>
+            {% empty %}
+              <span class="text-gray-500 text-sm">ไม่มี</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- ฟอร์มเพิ่มสินค้า -->
+      <form method="POST" action="{% url 'add_to_cart' menu_item.id %}" class="mt-6 flex items-center gap-4">
+        {% csrf_token %}
+        <div class="flex items-center gap-2">
+          <div class="flex items-center bg-white border border-gray-400 rounded-lg px-2 py-1">
+            <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="decrease">−</button>
+            <input type="number" name="quantity" value="1" min="1"
+                   class="quantity-input w-10 h-6 text-center border-none outline-none font-semibold text-base text-gray-800 leading-none" />
+            <button type="button" class="quantity-btn w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-gray-700 text-sm" data-type="increase">+</button>
+          </div>
+
+          <button type="submit" class="bg-black text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition">
+            <i class="fi fi-sr-shopping-cart text-[#ffffff] text-sm"></i>
+            <span>เพิ่มในตะกร้า</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const input = button.closest('form').querySelector('.quantity-input');
+        let value = parseInt(input.value);
+        if (button.dataset.type === 'increase') value++;
+        if (button.dataset.type === 'decrease' && value > 1) value--;
+        input.value = value;
+      });
+    });
+  });
+</script>
 {% endblock %}

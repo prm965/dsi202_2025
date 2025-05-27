@@ -72,7 +72,8 @@ img {
   opacity: 0;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
+/* เพิ่มการเชื่อมต่อฟอนต์ Prompt */
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 *,
 *::before,
@@ -84,7 +85,53 @@ img {
 
 body,
 input {
-  font-family: "Poppins", sans-serif;
+  font-family: "Prompt", sans-serif;  /* ใช้ฟอนต์ Prompt */
+}
+
+/* คุณสามารถกำหนดคลาสเพิ่มเติมที่ใช้ฟอนต์ Prompt แบบต่างๆ ได้ */
+.prompt-thin {
+  font-family: "Prompt", sans-serif;
+  font-weight: 100;
+}
+
+.prompt-extralight {
+  font-family: "Prompt", sans-serif;
+  font-weight: 200;
+}
+
+.prompt-light {
+  font-family: "Prompt", sans-serif;
+  font-weight: 300;
+}
+
+.prompt-regular {
+  font-family: "Prompt", sans-serif;
+  font-weight: 400;
+}
+
+.prompt-medium {
+  font-family: "Prompt", sans-serif;
+  font-weight: 500;
+}
+
+.prompt-semibold {
+  font-family: "Prompt", sans-serif;
+  font-weight: 600;
+}
+
+.prompt-bold {
+  font-family: "Prompt", sans-serif;
+  font-weight: 700;
+}
+
+.prompt-extrabold {
+  font-family: "Prompt", sans-serif;
+  font-weight: 800;
+}
+
+.prompt-black {
+  font-family: "Prompt", sans-serif;
+  font-weight: 900;
 }
 
 main {

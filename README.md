@@ -33,19 +33,20 @@
 
 ---
 
-## 3.4 การติดตั้งและใช้งาน
+## การติดตั้งและใช้งาน
+
 ### ขั้นตอนการติดตั้ง
 1. โคลนโปรเจกต์จาก GitHub:
 ```bash
-git clone https://github.com/yourusername/imsuk.git
-cd imsuk
+git clone https://github.com/prm965/dsi202_2025.git
+cd dsi202_2025
 ```
 
-2. สร้าง virtual environment และติดตั้ง dependency:
+2. สร้าง virtual environment และติดตั้ง Django:
 ```bash
 python -m venv env
 source env/bin/activate  # บน Windows ใช้ env\Scripts\activate
-pip install -r requirements.txt
+pip install django
 ```
 
 3. ตั้งค่า Database (SQLite):
@@ -60,3 +61,4 @@ python manage.py runserver
 
 5. เปิดใช้งาน:
 เข้าสู่ `http://127.0.0.1:8000` ผ่านเว็บเบราว์เซอร์เพื่อเริ่มต้นใช้งาน
+
